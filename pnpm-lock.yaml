@@ -26,6 +26,10 @@ importers:
       tailwindcss:
         specifier: ^4.3.0
         version: 4.3.0
+    devDependencies:
+      '@cloudflare/workers-types':
+        specifier: ^4.20260511.1
+        version: 4.20260511.1
 
 packages:
 
@@ -94,6 +98,9 @@ packages:
   '@clack/prompts@1.4.0':
     resolution: {integrity: sha512-S0My7XPGIgpRWMDG8uRqalbgT+a6FmCUdOW+HaIOVVpUPHOb7RrpvjTjiODadKp06fsrVDJZlIzc6yCTp4AnxA==}
     engines: {node: '>= 20.12.0'}
+
+  '@cloudflare/workers-types@4.20260511.1':
+    resolution: {integrity: sha512-FA+si7cOq9i/gtCHhIc0XJL0l1F/ApF+m00752Aj7WZFJrj3ZulT2T8/+rT3BabMT0QEnqFEGIqCgrmqhgEfMg==}
 
   '@ctrl/tinycolor@4.2.0':
     resolution: {integrity: sha512-kzyuwOAQnXJNLS9PSyrk0CWk35nWJW/zl/6KvnTBMFK65gm7U1/Z5BqjxeapjZCIhQcM/DsrEmcbRwDyXyXK4A==}
@@ -2097,6 +2104,8 @@ snapshots:
       fast-string-width: 3.0.2
       fast-wrap-ansi: 0.2.0
       sisteransi: 1.0.5
+
+  '@cloudflare/workers-types@4.20260511.1': {}
 
   '@ctrl/tinycolor@4.2.0': {}
 

@@ -19,5 +19,8 @@
     "sharp": "^0.34.5",
     "tailwindcss": "^4.3.0"
   },
-  "packageManager": "pnpm@10.17.1"
+  "packageManager": "pnpm@10.17.1",
+  "devDependencies": {
+    "@cloudflare/workers-types": "^4.20260511.1"
+  }
 }
