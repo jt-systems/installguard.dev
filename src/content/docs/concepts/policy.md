@@ -50,4 +50,4 @@ You only need a policy file when you want to *deviate* from defaults.
 
 ## Schema
 
-The full schema is generated from the Rust source: [`installguard-policy-schema.json`](https://github.com/jt-systems/installguard/blob/main/policy.schema.json). Editor JSON-schema autocomplete in VS Code, IntelliJ, and any LSP client.
+The full schema is generated from the Rust source: [`installguard-policy.schema.json`](https://github.com/jt-systems/installguard/blob/main/schemas/installguard-policy.schema.json). See [Editor setup](/usage/editor-setup/) to wire it into VS Code, Zed, JetBrains, or Neovim for autocomplete and inline validation.

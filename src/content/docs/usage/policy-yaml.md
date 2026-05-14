@@ -4,9 +4,9 @@ description: Full reference for installguard.yaml.
 ---
 
 The canonical reference is the JSON schema generated from the Rust source:
-[`policy.schema.json`](https://github.com/jt-systems/installguard/blob/main/policy.schema.json).
+[`installguard-policy.schema.json`](https://github.com/jt-systems/installguard/blob/main/schemas/installguard-policy.schema.json).
 
-Point your editor at it for auto-completion and inline validation.
+Point your editor at it for auto-completion and inline validation — see [Editor setup](/usage/editor-setup/) for VS Code, Zed, JetBrains, and Neovim snippets.
 
 ## Top-level keys
 

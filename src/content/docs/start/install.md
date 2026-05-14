@@ -14,7 +14,7 @@ The tap installs a single static binary; no Ruby, Python, or Node runtime is req
 ## From source (any platform with Rust ≥ 1.86)
 
 ```sh
-cargo install --git https://github.com/jt-systems/installguard installguard-cli
+cargo install --git https://github.com/jt-systems/installguard installguard --locked
 ```
 
 ## Pre-built binaries

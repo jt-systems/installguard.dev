@@ -76,7 +76,7 @@ That's an info-level warning, not an error. If you don't have an `installguard.y
 
 ## My CI exit code is 1 but the report shows zero blocks
 
-Check the warn count. If you've configured `installguard ci --warn-as-error`, warnings also fail the build. Otherwise, see [Reference › Exit codes](/reference/exit-codes/) for the canonical mapping.
+Check the warn count. If you've set `installguard ci --max-warn N` and the run produced more than `N` warnings, the job fails. Set `--max-warn 0` for strict warn-as-error semantics; omit it to fail only on blocks. Otherwise, see [Reference › Exit codes](/reference/exit-codes/) for the canonical mapping.
 
 ## Where do I report a real attack?
 
