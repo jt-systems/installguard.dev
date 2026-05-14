@@ -41,7 +41,9 @@ export default defineConfig({
           items: [
             { label: "Signals", slug: "concepts/signals" },
             { label: "Policy", slug: "concepts/policy" },
+            { label: "Severity model", slug: "concepts/severity" },
             { label: "Decisions", slug: "concepts/decisions" },
+            { label: "Workspaces", slug: "concepts/workspaces" },
           ],
         },
         {
@@ -51,6 +53,7 @@ export default defineConfig({
             { label: "ci", slug: "usage/ci" },
             { label: "report", slug: "usage/report" },
             { label: "Policy YAML", slug: "usage/policy-yaml" },
+            { label: "Troubleshooting", slug: "usage/troubleshooting" },
           ],
         },
         {
@@ -58,6 +61,7 @@ export default defineConfig({
           items: [
             { label: "GitHub Actions", slug: "recipes/github-actions" },
             { label: "Monorepos", slug: "recipes/monorepos" },
+            { label: "Expo + monorepo case study", slug: "recipes/expo-monorepo" },
           ],
         },
         {
@@ -65,6 +69,7 @@ export default defineConfig({
           items: [
             { label: "Reason codes", slug: "reference/reason-codes" },
             { label: "Exit codes", slug: "reference/exit-codes" },
+            { label: "Changelog", slug: "reference/changelog" },
           ],
         },
       ],

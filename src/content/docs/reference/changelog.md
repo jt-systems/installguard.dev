@@ -1,0 +1,57 @@
+---
+title: Changelog
+description: What shipped in each InstallGuard release.
+---
+
+The canonical changelog lives in the repo at [`CHANGELOG.md`](https://github.com/jt-systems/installguard/blob/main/CHANGELOG.md). This page mirrors the user-facing highlights.
+
+## 0.1.10 — 2026-05-14
+
+`defaults.nameSquatAllow` allowlist for the name-squat detector. Levenshtein-1 catches typosquats but also produces false positives for legitimate packages whose names happen to sit near a popular one — most visibly `gaxios` (Google's HTTP client) being flagged against `axios`. Operators can now suppress specific names without disabling the detector globally.
+
+```yaml
+defaults:
+  nameSquatAllow: [gaxios]
+```
+
+Allowlist is exact-match only — typo-of-an-allowlisted-name still fires.
+
+## 0.1.9 — 2026-05-14
+
+Registry lookup tolerates `v`-prefixed lockfile versions. Some lockfiles record `version: 'v1.35.1'` when npm/yarn resolved against a GitHub release tag; the registry stores bare semver, so the literal lookup missed every time and surfaced as `signal-unavailable`. The provider now retries with the leading `v` stripped (only when followed by an ASCII digit, so `velocity` is unaffected). Lockfile-fidelity is preserved in audit output; only the lookup is normalized.
+
+## 0.1.8 — 2026-05-14
+
+Workspace-aware policy. npm v3+ lockfiles record workspace members at their on-disk path with no `resolved` URL — these were being treated as private registry packages and producing one `signal-unavailable` per member. The npm adapter now classifies them as `Source::Workspace`, the CLI skips signal gathering, and `Policy::evaluate` short-circuits to `Allow`. See [Concepts › Workspaces](/concepts/workspaces/).
+
+## 0.1.7 — 2026-05-14
+
+`signal-unavailable` default severity demoted from `block` to `warn`. A provider failing to answer is not evidence of compromise. Operators who want strict-fail-closed semantics can promote with `severity.signal-unavailable: block`.
+
+## 0.1.6 — 2026-05-14
+
+`dist-tag-anomaly` default severity demoted from `block` to `warn`. A backwards-moving `latest` is structurally unusual but most often indicates a maintainer running an LTS line as `latest` while a newer major exists on a separate tag.
+
+## 0.1.5 — 2026-05-14
+
+Bugfix: the per-reason `↳` remediation hint promised in 0.1.4 was wired into `Reason::remediation()` but never rendered. Restored, so each finding now actually prints its hint immediately under the bullet.
+
+## 0.1.4 — 2026-05-14
+
+Scan UX: actionable next-steps. Each finding carries a one-line remediation hint specific to its signal class, and pretty output ends with a generic "Next steps" footer pointing at investigation, allowlisting, freezing, and reporting paths.
+
+## 0.1.3 — 2026-05-14
+
+Scan UX: live progress indicator. A small Braille spinner ticks on stderr at 10 Hz with a `done/total` counter during the signal-gather phase. Suppressed when stderr isn't a TTY and when `NO_COLOR` is set.
+
+## 0.1.2 — 2026-05-14
+
+Cuts ~21 false-positive blocks from the same real-world 1,276-package scan that 0.1.1 drove down from ~120 to ~21. Default `scripts.allow` now includes a curated set of well-known native-binary / asset-bootstrap packages: `bcrypt`, `cypress`, `electron`, `esbuild`, `fsevents`, `msw`, `node-gyp`, `node-pre-gyp`, `playwright`, `puppeteer`, `sharp`. `DistTagAnomaly` no longer fires for same-major patch / minor drift. On-disk cache schema bumped so v0.1.1 fixes take effect on machines with populated caches.
+
+## 0.1.1 — 2026-05-14
+
+First maintenance release. Reduces noise from real-world scans, fixes a packument decode regression that affected the React 19 family, and ships the new `installguard report` subcommand.
+
+## 0.1.0 — 2026-05-13
+
+First tagged alpha. Covers milestones M0 through M4 from the [roadmap](https://github.com/jt-systems/installguard/blob/main/ROADMAP.md) — lockfile parsing, signal providers, policy DSL, evidence outputs (CycloneDX SBOM, in-toto attestations, OpenVEX), publisher/provenance signals, OSV/deps.dev/Scorecard providers, and the public `SignalProvider` trait.

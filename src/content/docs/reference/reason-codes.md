@@ -26,5 +26,6 @@ Every block / warn carries a kebab-case reason code. These codes are stable acro
 | `archived-upstream` | Upstream repository is archived. |
 | `scorecard-below-threshold` | OpenSSF Scorecard score below `minScorecardScore`. |
 | `exotic-source` | Dependency resolved from git / tarball / file (not the registry). |
+| `signal-unavailable` | A signal provider could not answer (404, 5xx, decode error, timeout). Default severity `warn` — see [Severity model](/concepts/severity/). |
 
-Use these in the [`severity:` map](/usage/policy-yaml/#severity) to demote or promote individual reasons.
+Use these in the [`severity:` map](/usage/policy-yaml/#severity) to demote or promote individual reasons. The default verdict for each reason is documented in [Concepts › Severity model](/concepts/severity/).
