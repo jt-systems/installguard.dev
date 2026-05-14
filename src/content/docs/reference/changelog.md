@@ -5,6 +5,10 @@ description: What shipped in each InstallGuard release.
 
 The canonical changelog lives in the repo at [`CHANGELOG.md`](https://github.com/jt-systems/installguard/blob/main/CHANGELOG.md). This page mirrors the user-facing highlights.
 
+## 0.1.12 — 2026-05-14
+
+New [`installguard doctor`](/usage/doctor/) subcommand. Runs the same evaluation pipeline as `scan`, but instead of printing a verdict it groups the actionable findings by class and emits a ready-to-paste `installguard.yaml` block that resolves the false positives we have a known fix for: lifecycle-script blocks become a `scripts.allow` list (commented with the scripts seen so reviewers can vet before allowing), name-squat blocks become a `defaults.nameSquatAllow` list (commented with the package each one resembles), and `dist-tag-anomaly` / `signal-unavailable` blocks become explicit `severity: warn` overrides (their default since 0.1.6 / 0.1.7 — surfacing this means the operator had locally promoted them). Doctor is advisory only — it always exits `0`; use `scan` or `ci` to gate. Closes the "blocked → triage → write config" loop into a single command for first-time adopters.
+
 ## 0.1.11 — 2026-05-14
 
 Default `scripts.allow` gains `supabase`. The npm-distributed Supabase CLI is the postinstall-downloads-platform-binary pattern (same shape as `esbuild`, `playwright`, `@biomejs/biome`): the script genuinely needs to run for the package to function, and it satisfies the existing inclusion criteria — well over 1M weekly downloads, single well-understood install purpose (fetch the platform-appropriate CLI binary from GitHub Releases and install it into `node_modules/.bin`), no historical takeover advisory tied to the install script. User-supplied `scripts.allow` continues to extend (not replace) the built-in default.

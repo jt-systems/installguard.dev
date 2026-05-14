@@ -52,6 +52,7 @@ export default defineConfig({
             { label: "scan", slug: "usage/scan" },
             { label: "ci", slug: "usage/ci" },
             { label: "report", slug: "usage/report" },
+            { label: "doctor", slug: "usage/doctor" },
             { label: "Policy YAML", slug: "usage/policy-yaml" },
             { label: "Troubleshooting", slug: "usage/troubleshooting" },
           ],
