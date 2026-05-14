@@ -18,7 +18,7 @@ A real walk-through of running `installguard scan` against a 2,666-package npm-w
 
 | Class | Count | Why |
 |---|---|---|
-| `signal-unavailable` for workspace members (`@pet-records/api`, `@pet-records/shared`, …) | 8 | npm v3 lockfile records workspace members with no `resolved` URL → adapter thought they were registry packages → 404. **Fixed in v0.1.8** via [workspace classification](/concepts/workspaces/). |
+| `signal-unavailable` for workspace members (`@acme/api`, `@acme/shared`, …) | 8 | npm v3 lockfile records workspace members with no `resolved` URL → adapter thought they were registry packages → 404. **Fixed in v0.1.8** via [workspace classification](/concepts/workspaces/). |
 | `signal-unavailable` for `@upstash/redis@v1.35.1` and friends | ~6 | Lockfile recorded `version: 'v1.35.1'` (leading `v` from a GitHub-release-tag resolution); npm registry stores bare semver. **Fixed in v0.1.9** — the npm adapter now retries with `v` stripped when followed by an ASCII digit. |
 | `signal-unavailable` for transient packument decode errors | ~4 | Real flaky-egress noise. **Demoted in v0.1.7** from default `block` to default `warn`. |
 | `dist-tag-anomaly` for the entire Expo SDK 54 family | ~50 | Expo deliberately keeps `latest` on SDK 55 while SDK 56 stabilises. **Demoted in v0.1.6** from default `block` to default `warn` — backwards-moving `latest` is overwhelmingly LTS-line maintenance, not an attack. |
