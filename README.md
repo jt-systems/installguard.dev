@@ -15,7 +15,9 @@ pnpm preview      # serve the production build locally
 
 ## Deploy
 
-Cloudflare Pages auto-detects Astro. Build command: `pnpm build`. Output directory: `dist`. Production branch: `main`. Custom domain: `installguard.dev`.
+Cloudflare Workers + Static Assets. The committed [`wrangler.jsonc`](wrangler.jsonc) declares the Worker name (`installguard` — must be `[a-z0-9-]+`, hence not `installguard.dev`) and binds `./dist` as the asset directory. Cloudflare auto-detects this on push to `main` and deploys without any dashboard build configuration.
+
+Custom domain `installguard.dev` is wired in the Cloudflare dashboard.
 
 Security headers are pinned in [`public/_headers`](public/_headers).
 
