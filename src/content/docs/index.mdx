@@ -1,0 +1,68 @@
+---
+title: InstallGuard
+description: Policy gate for npm/pnpm/yarn installs. Blocks risky dependencies before they touch your CI or your machine.
+template: splash
+hero:
+  tagline: A policy gate for <code>npm install</code>. Blocks risky packages — typosquats, brand-new releases, suspicious lifecycle scripts, known advisories — before they touch your CI or your machine.
+  image:
+    file: ../../assets/hero-shield.svg
+  actions:
+    - text: Get started
+      link: /start/install/
+      icon: right-arrow
+      variant: primary
+    - text: View on GitHub
+      link: https://github.com/jt-systems/installguard
+      icon: external
+      variant: minimal
+---
+
+import { Card, CardGrid, Code } from "@astrojs/starlight/components";
+
+<div class="not-content mx-auto max-w-3xl px-4 py-8">
+  <div class="rounded-lg border border-emerald-500/30 bg-slate-950 p-4 font-mono text-sm leading-relaxed shadow-xl shadow-emerald-500/5">
+    <div class="text-slate-500">$ installguard scan</div>
+    <div class="mt-2 text-emerald-400">✓ InstallGuard — OK</div>
+    <div class="text-slate-300">  1276 packages — 1273 allow · 3 warn · 0 block</div>
+    <div class="mt-3 text-amber-400">WARN</div>
+    <div class="text-slate-300">  some-package@1.2.3</div>
+    <div class="text-slate-400">    • published 18 hours ago — below 24h cooling-off threshold</div>
+  </div>
+</div>
+
+<CardGrid>
+  <Card title="Catches what advisories miss" icon="seti:shield">
+    Typosquats, brand-new versions from new accounts, dist-tag rollbacks,
+    install-time scripts, publisher changes — the patterns that ship malware
+    *before* OSV / GitHub Advisories know about them.
+  </Card>
+  <Card title="Policy as code" icon="document">
+    A single `installguard.yaml` per repo. Sane defaults; override per package.
+    Same policy runs locally, in CI, and as a pre-commit hook.
+  </Card>
+  <Card title="Built for CI" icon="rocket">
+    Single static binary. ~2s on a 1k-package lockfile after warm cache.
+    JSON output, JUnit XML, GitHub PR sticky-comment, exit codes that gate.
+  </Card>
+  <Card title="Works with what you have" icon="puzzle">
+    npm, pnpm, yarn out of the box. Reads `package-lock.json`, `pnpm-lock.yaml`,
+    `yarn.lock` directly — no install side effects, no daemon, no account.
+  </Card>
+</CardGrid>
+
+<div class="not-content mx-auto max-w-3xl px-4 py-12 text-center">
+  <h2 class="mb-4 text-2xl font-semibold text-slate-900 dark:text-slate-100">
+    30 seconds to first scan
+  </h2>
+  <div class="rounded-lg border border-slate-200 bg-slate-50 p-4 text-left font-mono text-sm dark:border-slate-800 dark:bg-slate-900">
+    <div class="text-slate-500"># macOS / Linux</div>
+    <div class="text-slate-900 dark:text-slate-100">brew install jt-systems/installguard/installguard</div>
+    <div class="mt-2 text-slate-500"># Then in any npm/pnpm/yarn project</div>
+    <div class="text-slate-900 dark:text-slate-100">installguard scan</div>
+  </div>
+  <div class="mt-6">
+    <a href="/start/install/" class="inline-block rounded-md bg-emerald-500 px-5 py-2.5 text-sm font-medium text-slate-950 hover:bg-emerald-400">
+      Read the docs →
+    </a>
+  </div>
+</div>
