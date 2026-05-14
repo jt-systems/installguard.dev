@@ -13,7 +13,7 @@ name: Rebuild site
 # rebuilds the site within seconds and the hero badge flips to the
 # new version immediately.
 #
-# Required secret: CF_DEPLOY_HOOK
+# Required secret: CF_DEPLOY_TOKEN
 #   Cloudflare dashboard → Workers & Pages → installguard → Settings
 #   → Triggers → Deploy Hooks → "Add Deploy Hook" → copy URL.
 
@@ -30,10 +30,10 @@ jobs:
     steps:
       - name: Trigger Cloudflare deploy
         env:
-          HOOK: ${{ secrets.CF_DEPLOY_HOOK }}
+          HOOK: ${{ secrets.CF_DEPLOY_TOKEN }}
         run: |
           if [ -z "$HOOK" ]; then
-            echo "::error::CF_DEPLOY_HOOK secret is not set"
+            echo "::error::CF_DEPLOY_TOKEN secret is not set"
             exit 1
           fi
           curl --fail --silent --show-error -X POST "$HOOK"
