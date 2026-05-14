@@ -37,7 +37,7 @@ Point your editor at it for auto-completion and inline validation.
 
 ## `scripts`
 
-Lifecycle scripts that run at install time (`preinstall`, `install`, `postinstall`) are denied by default. The built-in allowlist already covers well-known native-binary packages: `bcrypt`, `cypress`, `electron`, `esbuild`, `fsevents`, `msw`, `node-gyp`, `node-pre-gyp`, `playwright`, `puppeteer`, `sharp`. The user-supplied `scripts.allow` **extends** (not replaces) the built-in default.
+Lifecycle scripts that run at install time (`preinstall`, `install`, `postinstall`) are denied by default. The built-in allowlist already covers well-known native-binary packages: `bcrypt`, `cypress`, `electron`, `esbuild`, `fsevents`, `msw`, `node-gyp`, `node-pre-gyp`, `playwright`, `puppeteer`, `sharp`, `supabase`. The user-supplied `scripts.allow` **extends** (not replaces) the built-in default.
 
 ```yaml
 scripts:
