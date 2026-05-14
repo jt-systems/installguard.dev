@@ -1,0 +1,102 @@
+---
+/**
+ * RepoStats.astro — fetches the latest release tag and star count
+ * for the InstallGuard repo at *build time* and bakes them into the
+ * static HTML. No client-side JS, no third-party request from the
+ * browser, no CSP exception needed.
+ *
+ * Freshness model:
+ *   • Numbers are as fresh as the most recent build.
+ *   • A `release: published` event in jt-systems/installguard pings
+ *     a Cloudflare deploy hook → site rebuilds within seconds.
+ *   • A 6-hourly cron in installguard.dev pings the same hook so the
+ *     star count never drifts more than half a day.
+ *
+ * Auth model:
+ *   • Unauthenticated GitHub API: 60 req/hr per build IP. Two calls
+ *     per build, so we'd need 30 builds/hr from the same Cloudflare
+ *     edge to hit it. Fine in practice.
+ *   • If GITHUB_TOKEN is present in the build environment we use it
+ *     and get 5 000 req/hr. Optional; absence is handled gracefully.
+ *
+ * Failure model:
+ *   • Any fetch / parse / network failure falls back to the last-
+ *     known-good values hard-coded below. The site builds; the
+ *     numbers are stale rather than missing.
+ */
+
+const REPO = "jt-systems/installguard";
+
+// Fallbacks if GitHub is unreachable or rate-limited at build time.
+// Bump these when you ship a release so a cold rebuild without
+// network access still shows something sensible.
+const FALLBACK = {
+  tag: "v0.1.2",
+  releaseUrl: `https://github.com/${REPO}/releases/latest`,
+  stars: 0,
+};
+
+const headers: Record<string, string> = {
+  "User-Agent": "installguard.dev",
+  Accept: "application/vnd.github+json",
+  "X-GitHub-Api-Version": "2022-11-28",
+};
+const token = import.meta.env.GITHUB_TOKEN;
+if (token) headers.Authorization = `Bearer ${token}`;
+
+async function loadStats() {
+  try {
+    const [repoRes, relRes] = await Promise.all([
+      fetch(`https://api.github.com/repos/${REPO}`, { headers }),
+      fetch(`https://api.github.com/repos/${REPO}/releases/latest`, {
+        headers,
+      }),
+    ]);
+    if (!repoRes.ok || !relRes.ok) return FALLBACK;
+    const repo = (await repoRes.json()) as { stargazers_count?: number };
+    const rel = (await relRes.json()) as {
+      tag_name?: string;
+      html_url?: string;
+    };
+    return {
+      tag: rel.tag_name ?? FALLBACK.tag,
+      releaseUrl: rel.html_url ?? FALLBACK.releaseUrl,
+      stars: repo.stargazers_count ?? FALLBACK.stars,
+    };
+  } catch {
+    return FALLBACK;
+  }
+}
+
+const { tag, releaseUrl, stars } = await loadStats();
+const formattedStars = stars.toLocaleString("en-US");
+---
+
+<div class="not-content flex flex-wrap items-center gap-2 text-xs font-medium tracking-wide uppercase">
+  <a
+    href={releaseUrl}
+    class="inline-flex items-center gap-1.5 rounded-full border border-emerald-500/30 bg-emerald-500/10 px-3 py-1 font-mono text-emerald-300 transition hover:border-emerald-400/60 hover:bg-emerald-500/15"
+  >
+    <span class="size-1.5 rounded-full bg-emerald-400"></span>
+    {tag}
+  </a>
+  <a
+    href={`https://github.com/${REPO}/stargazers`}
+    class="inline-flex items-center gap-1.5 rounded-full border border-slate-700/60 bg-slate-900/40 px-3 py-1 font-mono text-slate-300 transition hover:border-slate-500 hover:text-slate-100"
+  >
+    <svg viewBox="0 0 16 16" class="size-3.5 fill-current" aria-hidden="true">
+      <path d="M8 .25a.75.75 0 0 1 .673.418l1.882 3.815 4.21.612a.75.75 0 0 1 .416 1.279l-3.046 2.97.719 4.192a.75.75 0 0 1-1.088.791L8 12.347l-3.766 1.98a.75.75 0 0 1-1.088-.79l.72-4.194L.818 6.374a.75.75 0 0 1 .416-1.28l4.21-.611L7.327.668A.75.75 0 0 1 8 .25Z" />
+    </svg>
+    {formattedStars}
+  </a>
+  <span
+    class="inline-flex items-center gap-1.5 rounded-full border border-slate-700/60 bg-slate-900/40 px-3 py-1 font-mono text-slate-300"
+  >
+    Apache-2.0
+  </span>
+  <span
+    class="inline-flex items-center gap-1.5 rounded-full border border-slate-700/60 bg-slate-900/40 px-3 py-1 font-mono text-slate-300"
+  >
+    macOS · Linux · Windows
+  </span>
+</div>

@@ -1,0 +1,26 @@
+---
+/**
+ * ScanDemo.astro — fixed sample of `installguard scan` output styled
+ * with inline-coloured spans. Lives outside MDX because multi-line
+ * <pre><code> with blank lines confuses the MDX paragraph parser.
+ */
+import Terminal from "./Terminal.astro";
+---
+
+<Terminal title="~/work/api · installguard scan"
+><span class="text-slate-500">$ </span><span class="text-slate-200">installguard scan</span>
+<span class="text-emerald-400">  ✓ 1,273 packages cleared</span><span class="text-slate-500">  ·  policy v1  ·  cache hit 99.8%  ·  1.84s</span>
+
+<span class="text-rose-400">  ✗ block</span><span class="text-slate-300">    </span><span class="text-slate-100">react-toolkit-utils@2.0.0</span>
+<span class="text-slate-500">              name-squat  </span><span class="text-slate-400">distance-1 from `react-toolkit` (38M dl/wk)</span>
+<span class="text-slate-500">              suspicious-script  </span><span class="text-slate-400">postinstall executes base64-decoded payload</span>
+
+<span class="text-rose-400">  ✗ block</span><span class="text-slate-300">    </span><span class="text-slate-100">@acme/auth@4.1.7</span>
+<span class="text-slate-500">              publisher-change  </span><span class="text-slate-400">new maintainer account, registered 6h ago</span>
+
+<span class="text-amber-400">  ⚠ warn</span><span class="text-slate-300">     </span><span class="text-slate-100">color-utils@1.4.2</span>
+<span class="text-slate-500">              release-age-below-threshold  </span><span class="text-slate-400">published 18h ago (24h cooling-off)</span>
+
+<span class="text-slate-500">  Summary: </span><span class="text-emerald-400">1273 allow</span><span class="text-slate-500"> · </span><span class="text-amber-400">1 warn</span><span class="text-slate-500"> · </span><span class="text-rose-400">2 block</span>
+<span class="text-slate-500">$ </span><span class="text-slate-500">echo $?</span>
+<span class="text-slate-300">1</span></Terminal>

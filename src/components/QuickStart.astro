@@ -1,0 +1,19 @@
+---
+/**
+ * QuickStart.astro — three-step install/scan/CI snippet for the
+ * homepage. Lives in an .astro component for the same MDX-paragraph
+ * reason as ScanDemo.
+ */
+import Terminal from "./Terminal.astro";
+---
+
+<Terminal title="macOS · Linux · WSL"
+><span class="text-slate-500"># 1. Install</span>
+<span class="text-slate-200">brew install jt-systems/installguard/installguard</span>
+
+<span class="text-slate-500"># 2. Scan any npm / pnpm / yarn project</span>
+<span class="text-slate-200">cd ~/work/your-project</span>
+<span class="text-slate-200">installguard scan</span>
+
+<span class="text-slate-500"># 3. Wire it into CI (exit code 1 on block)</span>
+<span class="text-slate-200">installguard ci --summary-file summary.json</span></Terminal>

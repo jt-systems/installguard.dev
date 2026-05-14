@@ -1,0 +1,41 @@
+name: Rebuild site
+
+# Pings the Cloudflare deploy hook so the static build re-fetches
+# GitHub stats and re-deploys.
+#
+# Triggers:
+#   * 6-hourly cron — keeps the star count and any other build-time
+#     data within ~6h of reality without manual intervention.
+#   * workflow_dispatch — manual nudge from the Actions UI.
+#
+# The release-driven trigger lives in the installguard source repo
+# (.github/workflows/notify-site-rebuild.yml there) so a tag push
+# rebuilds the site within seconds and the hero badge flips to the
+# new version immediately.
+#
+# Required secret: CF_DEPLOY_HOOK
+#   Cloudflare dashboard → Workers & Pages → installguard → Settings
+#   → Triggers → Deploy Hooks → "Add Deploy Hook" → copy URL.
+
+on:
+  schedule:
+    - cron: "0 */6 * * *"
+  workflow_dispatch:
+
+permissions: {}
+
+jobs:
+  ping:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Trigger Cloudflare deploy
+        env:
+          HOOK: ${{ secrets.CF_DEPLOY_HOOK }}
+        run: |
+          if [ -z "$HOOK" ]; then
+            echo "::error::CF_DEPLOY_HOOK secret is not set"
+            exit 1
+          fi
+          curl --fail --silent --show-error -X POST "$HOOK"
+          echo
+          echo "Deploy hook fired."
