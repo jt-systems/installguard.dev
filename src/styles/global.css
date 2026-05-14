@@ -1,17 +1,20 @@
 /* InstallGuard.dev — design tokens & landing surface
  *
  * The brand is the CLI's `✓ allow` emerald on a deep slate ground.
- * Two layers do the work:
+ * Three layers do the work:
  *
- *   1. Tailwind v4 `@theme` tokens (colour ramps + typography scale)
- *      so utilities like `text-emerald-400` keep their semantic
- *      meaning across the marketing surface.
- *   2. Starlight's `--sl-color-*` variables, which we override
- *      explicitly so every Starlight chrome element (CTA buttons,
- *      links, sidebar accent, focus rings, kbd, badges) tracks the
- *      same emerald — the starlight-tailwind preset doesn't reliably
- *      pick our accents up under Tailwind v4 yet, so we wire them
- *      ourselves to remove all doubt.
+ *   1. Tailwind v4 `@theme` tokens (colour ramps) so utilities like
+ *      `text-emerald-400` keep their meaning across the surface.
+ *   2. Starlight's `--sl-color-*` variables, overridden explicitly
+ *      so every Starlight chrome element (CTA buttons, links,
+ *      sidebar accent, focus rings, kbd, badges) tracks the same
+ *      emerald in both themes.
+ *   3. Custom `--ig-*` semantic tokens (defined per-theme below) so
+ *      every `.ig-*` landing component reads from the same set of
+ *      foreground / surface / hairline values and flips with the
+ *      theme attribute. Hardcoding hex values inside component
+ *      rules left light mode unreadable in the first pass — never
+ *      again.
  */
 
 @import "tailwindcss";
@@ -55,8 +58,44 @@
   --sl-font-mono: var(--sl-font-system-mono);
 }
 
-/* ---------- Accent override (dark) ---------- */
+/* ---------- Theme tokens ----------
+ * Naming key:
+ *   --ig-fg-strong   primary headings, hero title           AAA on bg
+ *   --ig-fg          body copy, buttons                     AAA on bg
+ *   --ig-fg-muted    secondary copy, captions               AA on bg
+ *   --ig-fg-subtle   eyebrows, terminal comments, dividers  visual only
+ *   --ig-accent      brand emerald (text + fills)
+ *   --ig-accent-soft tinted accent for chip backgrounds
+ *   --ig-bg          page ground
+ *   --ig-surface     card surface, elevated +1
+ *   --ig-surface-2   nav / terminal bar surface
+ *   --ig-hairline    1px borders & dividers
+ *   --ig-hairline-strong  hover hairline
+ *   --ig-glow        radial brand glow tint
+ */
 :root[data-theme="dark"] {
+  --ig-fg-strong: #f8fafc;
+  --ig-fg: #e2e8f0;
+  --ig-fg-muted: #94a3b8;
+  --ig-fg-subtle: #64748b;
+  --ig-accent: #34d399;
+  --ig-accent-strong: #6ee7b7;
+  --ig-accent-soft: rgba(16, 185, 129, 0.10);
+  --ig-accent-border: rgba(16, 185, 129, 0.28);
+  --ig-bg: #020617;
+  --ig-surface: rgba(15, 23, 42, 0.72);
+  --ig-surface-2: rgba(15, 23, 42, 0.6);
+  --ig-surface-solid: #0f172a;
+  --ig-hairline: rgba(148, 163, 184, 0.14);
+  --ig-hairline-strong: rgba(110, 231, 183, 0.4);
+  --ig-glow: rgba(16, 185, 129, 0.18);
+  --ig-terminal-bg: #020617;
+  --ig-terminal-fg: #cbd5e1;
+  --ig-terminal-bar: rgba(15, 23, 42, 0.6);
+  --ig-btn-primary-fg: #022c22;
+  --ig-btn-ghost-bg: rgba(15, 23, 42, 0.4);
+
+  /* Starlight chrome */
   --sl-color-accent-low: #022c22;
   --sl-color-accent: #10b981;
   --sl-color-accent-high: #a7f3d0;
@@ -76,20 +115,44 @@
   --sl-color-hairline-shade: rgba(15, 23, 42, 0.8);
 }
 
-/* ---------- Accent override (light) ---------- */
 :root[data-theme="light"] {
+  /* Foreground — slate-900/700/500/400 against a near-white ground.
+   * #0f172a on #ffffff = 17.6:1 (AAA). #475569 = 7.5:1 (AAA). */
+  --ig-fg-strong: #0f172a;
+  --ig-fg: #1e293b;
+  --ig-fg-muted: #475569;
+  --ig-fg-subtle: #64748b;
+  --ig-accent: #047857;          /* darker emerald — 5.4:1 on white */
+  --ig-accent-strong: #065f46;   /* 7.4:1 on white */
+  --ig-accent-soft: rgba(5, 150, 105, 0.08);
+  --ig-accent-border: rgba(5, 150, 105, 0.3);
+  --ig-bg: #ffffff;
+  --ig-surface: #ffffff;
+  --ig-surface-2: #f8fafc;
+  --ig-surface-solid: #ffffff;
+  --ig-hairline: rgba(15, 23, 42, 0.10);
+  --ig-hairline-strong: rgba(5, 150, 105, 0.45);
+  --ig-glow: rgba(16, 185, 129, 0.10);
+  /* Terminals stay dark in light mode — they're product chrome,
+   * not page chrome. Keeps the CLI's identity intact. */
+  --ig-terminal-bg: #0b1220;
+  --ig-terminal-fg: #cbd5e1;
+  --ig-terminal-bar: rgba(255, 255, 255, 0.04);
+  --ig-btn-primary-fg: #ffffff;
+  --ig-btn-ghost-bg: #ffffff;
+
+  /* Starlight chrome */
   --sl-color-accent-low: #d1fae5;
-  --sl-color-accent: #059669;
+  --sl-color-accent: #047857;
   --sl-color-accent-high: #064e3b;
 }
 
 /* ---------- Page surface depth ----------
- * A faint emerald-tinted radial wash at the top of the viewport
- * gives the dark ground some atmosphere without competing with the
- * content. Fixed-position so it doesn't repeat on long doc pages.
+ * Brand glow at the top of the viewport on both themes; lighter
+ * touch in light mode so it doesn't muddy the white ground.
  */
 :root[data-theme="dark"] body {
-  background-color: var(--sl-color-bg);
+  background-color: var(--ig-bg);
   background-image:
     radial-gradient(
       ellipse 80% 50% at 50% -10%,
@@ -104,6 +167,17 @@
   background-attachment: fixed;
 }
 
+:root[data-theme="light"] body {
+  background-color: var(--ig-bg);
+  background-image:
+    radial-gradient(
+      ellipse 70% 40% at 50% -5%,
+      rgba(16, 185, 129, 0.06),
+      transparent 70%
+    );
+  background-attachment: fixed;
+}
+
 /* Translucent header so the wash bleeds through. */
 :root[data-theme="dark"] header.header {
   background: linear-gradient(
@@ -114,6 +188,17 @@
   backdrop-filter: saturate(140%) blur(10px);
   -webkit-backdrop-filter: saturate(140%) blur(10px);
   border-bottom-color: rgba(148, 163, 184, 0.08);
+}
+
+:root[data-theme="light"] header.header {
+  background: linear-gradient(
+    180deg,
+    rgba(255, 255, 255, 0.92) 0%,
+    rgba(255, 255, 255, 0.7) 100%
+  );
+  backdrop-filter: saturate(140%) blur(10px);
+  -webkit-backdrop-filter: saturate(140%) blur(10px);
+  border-bottom-color: rgba(15, 23, 42, 0.08);
 }
 
 /* ---------- Splash hero suppression ----------
@@ -144,8 +229,6 @@
 
 /* ---------- Custom landing utilities ---------- */
 
-/* Reusable section wrapper so margins and gutters stay identical
- * across every band on the homepage. */
 .ig-section {
   margin-inline: auto;
   padding-inline: clamp(1rem, 4vw, 2rem);
@@ -160,7 +243,7 @@
   margin-top: clamp(4rem, 8vw, 6.5rem);
 }
 
-/* Eyebrow label — small caps, emerald, single source of truth. */
+/* Eyebrow label — small caps, brand emerald. */
 .ig-eyebrow {
   display: inline-flex;
   align-items: center;
@@ -170,7 +253,7 @@
   font-weight: 600;
   letter-spacing: 0.18em;
   text-transform: uppercase;
-  color: #6ee7b7;
+  color: var(--ig-accent);
 }
 
 .ig-eyebrow::before {
@@ -183,55 +266,60 @@
   box-shadow: 0 0 12px currentColor;
 }
 
-/* Section heading — sentence case, tight tracking, restrained. */
 .ig-section-title {
   margin: 0.75rem 0 0.5rem;
   font-size: clamp(1.5rem, 2.6vw, 2rem);
   line-height: 1.15;
   letter-spacing: -0.02em;
   font-weight: 600;
-  color: #f8fafc;
+  color: var(--ig-fg-strong);
 }
 
 .ig-section-lede {
   max-width: 44rem;
   font-size: 1rem;
   line-height: 1.6;
-  color: #94a3b8;
+  color: var(--ig-fg-muted);
 }
 
-/* Inline code chip used inside body copy on the dark ground. The
- * default `bg-slate-900` reads as page-bg here, so we lift it with
- * a faint emerald wash and a hairline border. */
+/* Inline code chip used inside body copy. */
 .ig-chip {
   display: inline-flex;
   align-items: baseline;
   gap: 0.25rem;
   padding: 0.05em 0.45em;
   border-radius: 0.3rem;
-  border: 1px solid rgba(16, 185, 129, 0.22);
-  background: rgba(16, 185, 129, 0.08);
+  border: 1px solid var(--ig-accent-border);
+  background: var(--ig-accent-soft);
   font-family: var(--sl-font-mono);
   font-size: 0.85em;
-  color: #6ee7b7;
+  color: var(--ig-accent-strong);
 }
 
-/* Card surface used by the signal grid + stats grid. Sits one stop
- * above the page bg with a hairline border and a barely-there inner
- * highlight so it reads as a real surface, not a Tailwind div. */
+/* Card surface used by the signal grid + stats grid. */
 .ig-card {
   position: relative;
   border-radius: 0.75rem;
-  border: 1px solid rgba(148, 163, 184, 0.12);
+  border: 1px solid var(--ig-hairline);
+  background: var(--ig-surface);
+  padding: 1.5rem;
+  transition:
+    border-color 160ms ease,
+    transform 160ms ease,
+    box-shadow 160ms ease;
+}
+
+:root[data-theme="dark"] .ig-card {
   background: linear-gradient(
     180deg,
     rgba(15, 23, 42, 0.72) 0%,
     rgba(2, 6, 23, 0.6) 100%
   );
-  padding: 1.5rem;
-  transition:
-    border-color 160ms ease,
-    transform 160ms ease;
+}
+
+:root[data-theme="light"] .ig-card {
+  background: #ffffff;
+  box-shadow: 0 1px 2px rgba(15, 23, 42, 0.04);
 }
 
 .ig-card::before {
@@ -253,8 +341,16 @@
   pointer-events: none;
 }
 
+:root[data-theme="light"] .ig-card::before {
+  display: none;
+}
+
 .ig-card:hover {
-  border-color: rgba(110, 231, 183, 0.35);
+  border-color: var(--ig-hairline-strong);
+}
+
+:root[data-theme="light"] .ig-card:hover {
+  box-shadow: 0 8px 24px -12px rgba(5, 150, 105, 0.25);
 }
 
 .ig-card-eyebrow {
@@ -263,14 +359,14 @@
   font-weight: 600;
   letter-spacing: 0.16em;
   text-transform: uppercase;
-  color: #34d399;
+  color: var(--ig-accent);
 }
 
 .ig-card-title {
   margin-top: 0.4rem;
   font-size: 1rem;
   font-weight: 600;
-  color: #f1f5f9;
+  color: var(--ig-fg-strong);
   letter-spacing: -0.005em;
 }
 
@@ -278,7 +374,7 @@
   margin-top: 0.5rem;
   font-size: 0.9rem;
   line-height: 1.55;
-  color: #94a3b8;
+  color: var(--ig-fg-muted);
 }
 
 /* Big-number stat used in the "engineered" band. */
@@ -287,11 +383,11 @@
   font-size: clamp(2rem, 3.6vw, 2.5rem);
   font-weight: 600;
   letter-spacing: -0.04em;
-  color: #34d399;
+  color: var(--ig-accent);
   line-height: 1;
 }
 
-/* CTA buttons — primary (filled emerald) and ghost (hairline). */
+/* CTA buttons. */
 .ig-btn {
   display: inline-flex;
   align-items: center;
@@ -312,10 +408,17 @@
 
 .ig-btn-primary {
   background: #10b981;
-  color: #022c22;
+  color: var(--ig-btn-primary-fg);
   box-shadow:
     0 1px 0 0 rgba(255, 255, 255, 0.2) inset,
     0 8px 24px -10px rgba(16, 185, 129, 0.6);
+}
+
+:root[data-theme="light"] .ig-btn-primary {
+  background: #047857;
+  box-shadow:
+    0 1px 0 0 rgba(255, 255, 255, 0.18) inset,
+    0 8px 20px -10px rgba(4, 120, 87, 0.55);
 }
 
 .ig-btn-primary:hover {
@@ -323,15 +426,24 @@
   color: #022c22;
 }
 
+:root[data-theme="light"] .ig-btn-primary:hover {
+  background: #059669;
+  color: #ffffff;
+}
+
 .ig-btn-ghost {
-  border: 1px solid rgba(148, 163, 184, 0.25);
-  background: rgba(15, 23, 42, 0.4);
-  color: #e2e8f0;
+  border: 1px solid var(--ig-hairline);
+  background: var(--ig-btn-ghost-bg);
+  color: var(--ig-fg);
+}
+
+:root[data-theme="light"] .ig-btn-ghost {
+  border-color: rgba(15, 23, 42, 0.18);
 }
 
 .ig-btn-ghost:hover {
-  border-color: rgba(110, 231, 183, 0.45);
-  color: #f8fafc;
+  border-color: var(--ig-hairline-strong);
+  color: var(--ig-fg-strong);
 }
 
 /* ---------- Hero ---------- */
@@ -358,13 +470,20 @@
   line-height: 1.05;
   letter-spacing: -0.035em;
   font-weight: 600;
-  color: #f8fafc;
+  color: var(--ig-fg-strong);
   max-width: 18ch;
   text-wrap: balance;
 }
 
 .ig-hero-title .accent {
-  background: linear-gradient(180deg, #6ee7b7 0%, #10b981 100%);
+  background: linear-gradient(180deg, #34d399 0%, #059669 100%);
+  -webkit-background-clip: text;
+          background-clip: text;
+  color: transparent;
+}
+
+:root[data-theme="light"] .ig-hero-title .accent {
+  background: linear-gradient(180deg, #059669 0%, #047857 100%);
   -webkit-background-clip: text;
           background-clip: text;
   color: transparent;
@@ -375,7 +494,7 @@
   max-width: 36ch;
   font-size: clamp(1.0625rem, 1.4vw, 1.1875rem);
   line-height: 1.55;
-  color: #cbd5e1;
+  color: var(--ig-fg);
   text-wrap: pretty;
 }
 
@@ -402,7 +521,7 @@
   inset: -20%;
   background: radial-gradient(
     closest-side,
-    rgba(16, 185, 129, 0.18),
+    var(--ig-glow),
     transparent 70%
   );
   z-index: -1;
@@ -412,21 +531,31 @@
 .ig-hero-mark svg {
   width: 100%;
   height: auto;
-  filter: drop-shadow(0 16px 30px rgba(16, 185, 129, 0.18));
+  filter: drop-shadow(0 16px 30px var(--ig-glow));
 }
 
-/* ---------- Terminal frame polish ---------- */
-
+/* ---------- Terminal frame ----------
+ * Terminals stay dark across both themes — they represent the CLI
+ * surface itself, not the page chrome. In light mode this means a
+ * deliberate contrast pop, the way an inline screenshot would feel.
+ */
 .ig-terminal {
   position: relative;
   border-radius: 0.75rem;
-  border: 1px solid rgba(148, 163, 184, 0.14);
-  background: #020617;
+  border: 1px solid var(--ig-hairline);
+  background: var(--ig-terminal-bg);
   overflow: hidden;
   box-shadow:
     0 1px 0 0 rgba(255, 255, 255, 0.04) inset,
     0 24px 60px -24px rgba(0, 0, 0, 0.6),
     0 0 0 1px rgba(16, 185, 129, 0.04);
+}
+
+:root[data-theme="light"] .ig-terminal {
+  border-color: rgba(15, 23, 42, 0.14);
+  box-shadow:
+    0 1px 0 0 rgba(255, 255, 255, 0.04) inset,
+    0 24px 60px -28px rgba(15, 23, 42, 0.4);
 }
 
 .ig-terminal::before {
@@ -452,8 +581,8 @@
   width: 2.5rem;
   background: linear-gradient(
     270deg,
-    #020617 0%,
-    rgba(2, 6, 23, 0) 100%
+    var(--ig-terminal-bg) 0%,
+    transparent 100%
   );
   pointer-events: none;
 }
@@ -464,7 +593,7 @@
   gap: 0.5rem;
   padding: 0.625rem 0.875rem;
   border-bottom: 1px solid rgba(148, 163, 184, 0.1);
-  background: rgba(15, 23, 42, 0.6);
+  background: var(--ig-terminal-bar);
 }
 
 .ig-terminal-dot {
@@ -484,12 +613,12 @@
 
 .ig-terminal-body {
   margin: 0;
-  padding: 1.25rem 1.25rem;
+  padding: 1.25rem;
   overflow-x: auto;
   font-family: var(--sl-font-mono);
   font-size: 0.8125rem;
   line-height: 1.65;
-  color: #cbd5e1;
+  color: var(--ig-terminal-fg);
   scrollbar-width: thin;
   scrollbar-color: rgba(148, 163, 184, 0.25) transparent;
 }
@@ -517,14 +646,14 @@
   gap: 0.4rem;
   padding: 0.3rem 0.7rem;
   border-radius: 9999px;
-  border: 1px solid rgba(148, 163, 184, 0.2);
-  background: rgba(15, 23, 42, 0.5);
+  border: 1px solid var(--ig-hairline);
+  background: var(--ig-surface-2);
   font-family: var(--sl-font-mono);
   font-size: 0.6875rem;
   font-weight: 500;
   letter-spacing: 0.08em;
   text-transform: uppercase;
-  color: #cbd5e1;
+  color: var(--ig-fg);
   text-decoration: none;
   transition:
     border-color 140ms ease,
@@ -532,15 +661,19 @@
     background-color 140ms ease;
 }
 
+:root[data-theme="light"] .ig-badge {
+  border-color: rgba(15, 23, 42, 0.14);
+}
+
 .ig-badge:hover {
-  border-color: rgba(110, 231, 183, 0.4);
-  color: #f1f5f9;
+  border-color: var(--ig-hairline-strong);
+  color: var(--ig-fg-strong);
 }
 
 .ig-badge--accent {
-  border-color: rgba(16, 185, 129, 0.35);
-  background: rgba(16, 185, 129, 0.08);
-  color: #6ee7b7;
+  border-color: var(--ig-accent-border);
+  background: var(--ig-accent-soft);
+  color: var(--ig-accent-strong);
 }
 
 .ig-badge--accent::before {
@@ -548,8 +681,8 @@
   width: 0.4rem;
   height: 0.4rem;
   border-radius: 9999px;
-  background: #34d399;
-  box-shadow: 0 0 10px rgba(52, 211, 153, 0.7);
+  background: var(--ig-accent);
+  box-shadow: 0 0 10px var(--ig-accent);
 }
 
 /* ---------- Signal grid (detection surface) ---------- */
