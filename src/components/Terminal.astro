@@ -1,22 +1,29 @@
 ---
 /**
  * Terminal.astro — chrome-style terminal frame with traffic-light dots.
- * Used on the homepage so we can render multi-line code blocks with
- * inline ANSI-style coloured spans without MDX's paragraph rules
- * eating the contents.
+ *
+ * Accepts content via the `body` prop as a raw HTML string and
+ * emits it with `set:html`. Going through a string (rather than a
+ * `<slot />` of literal markup) is the only way to preserve real
+ * newlines: Astro's HTML compiler normalises whitespace in JSX
+ * children, collapsing every line of a multi-line shell transcript
+ * into a single row.
+ *
+ * Styling lives in `global.css` under `.ig-terminal*`.
  */
 interface Props {
   title?: string;
+  body: string;
 }
-const { title } = Astro.props;
+const { title, body } = Astro.props;
 ---
 
-<div class="overflow-hidden rounded-lg border border-slate-800 bg-slate-950 shadow-2xl shadow-emerald-500/5">
-  <div class="flex items-center gap-2 border-b border-slate-800 bg-slate-900/60 px-4 py-2">
-    <span class="size-3 rounded-full bg-red-500/70"></span>
-    <span class="size-3 rounded-full bg-amber-500/70"></span>
-    <span class="size-3 rounded-full bg-emerald-500/70"></span>
-    {title && <span class="ml-3 font-mono text-xs text-slate-500">{title}</span>}
+<div class="ig-terminal">
+  <div class="ig-terminal-bar">
+    <span class="ig-terminal-dot" style="background:#ef4444"></span>
+    <span class="ig-terminal-dot" style="background:#f59e0b"></span>
+    <span class="ig-terminal-dot" style="background:#10b981"></span>
+    {title && <span class="ig-terminal-title">{title}</span>}
   </div>
-  <pre class="overflow-x-auto p-5 font-mono text-sm leading-relaxed"><code><slot /></code></pre>
+  <pre class="ig-terminal-body"><code set:html={body} /></pre>
 </div>

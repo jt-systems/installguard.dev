@@ -1,0 +1,69 @@
+---
+/**
+ * Hero.astro — fully custom landing hero. Replaces Starlight's
+ * splash hero so we can land the title, tagline, and shield mark
+ * with brand-correct typography, an emerald accent, and a glowing
+ * mark — instead of the default 720px raw SVG.
+ *
+ * The Starlight-emitted `.hero` block is hidden in `global.css`,
+ * but we keep `hero:` in the MDX frontmatter so the og-image and
+ * social metadata pipelines still see the page as a splash.
+ */
+---
+
+<section class="ig-hero ig-section">
+  <div>
+    <span class="ig-eyebrow">Supply-chain policy gate</span>
+    <h1 class="ig-hero-title">
+      Block compromised <span class="accent">npm installs</span> before they execute.
+    </h1>
+    <p class="ig-hero-tagline">
+      Typosquats, hijacked publishers, malicious lifecycle scripts, and
+      unpatched advisories &mdash; gated on your laptop, in CI, and at
+      the pre-commit hook.
+    </p>
+    <div class="ig-hero-actions">
+      <a href="/start/install/" class="ig-btn ig-btn-primary">
+        Install
+        <svg viewBox="0 0 16 16" class="size-4 fill-current" aria-hidden="true">
+          <path d="M6.22 3.22a.75.75 0 0 1 1.06 0l4.25 4.25a.75.75 0 0 1 0 1.06l-4.25 4.25a.75.75 0 1 1-1.06-1.06L9.94 8.5H2.75a.75.75 0 0 1 0-1.5h7.19L6.22 4.28a.75.75 0 0 1 0-1.06Z"/>
+        </svg>
+      </a>
+      <a href="https://github.com/jt-systems/installguard" class="ig-btn ig-btn-ghost">
+        View source
+        <svg viewBox="0 0 16 16" class="size-4 fill-current" aria-hidden="true">
+          <path d="M3.75 2A1.75 1.75 0 0 0 2 3.75v8.5C2 13.216 2.784 14 3.75 14h8.5A1.75 1.75 0 0 0 14 12.25V8.75a.75.75 0 0 0-1.5 0v3.5a.25.25 0 0 1-.25.25h-8.5a.25.25 0 0 1-.25-.25v-8.5A.25.25 0 0 1 3.75 3.5h3.5a.75.75 0 0 0 0-1.5h-3.5Zm6.5 0a.75.75 0 0 0 0 1.5h1.69L7.22 8.22a.75.75 0 1 0 1.06 1.06l4.72-4.72v1.69a.75.75 0 0 0 1.5 0V2.75A.75.75 0 0 0 13.75 2h-3.5Z"/>
+        </svg>
+      </a>
+    </div>
+  </div>
+  <div class="ig-hero-mark" aria-hidden="true">
+    <svg viewBox="0 0 240 240" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <linearGradient id="ig-shield-fill" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0" stop-color="#34d399" stop-opacity="0.35"/>
+          <stop offset="1" stop-color="#022c22" stop-opacity="0.05"/>
+        </linearGradient>
+        <linearGradient id="ig-shield-stroke" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0" stop-color="#6ee7b7"/>
+          <stop offset="1" stop-color="#10b981"/>
+        </linearGradient>
+      </defs>
+      <path
+        d="M120 20 L200 50 V120 C200 170 165 210 120 222 C75 210 40 170 40 120 V50 Z"
+        fill="url(#ig-shield-fill)"
+        stroke="url(#ig-shield-stroke)"
+        stroke-width="2.5"
+        stroke-linejoin="round"
+      />
+      <path
+        d="M85 122 L112 148 L160 92"
+        stroke="#a7f3d0"
+        stroke-width="6"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+        fill="none"
+      />
+    </svg>
+  </div>
+</section>

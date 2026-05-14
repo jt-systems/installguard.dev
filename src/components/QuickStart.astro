@@ -1,19 +1,25 @@
 ---
 /**
  * QuickStart.astro — three-step install/scan/CI snippet for the
- * homepage. Lives in an .astro component for the same MDX-paragraph
- * reason as ScanDemo.
+ * homepage. Built as a template-literal HTML body for the same
+ * whitespace-preservation reason as ScanDemo.
  */
 import Terminal from "./Terminal.astro";
+
+const dim = (t: string) => `<span style="color:#64748b">${t}</span>`;
+const fg = (t: string) => `<span style="color:#e2e8f0">${t}</span>`;
+
+const body = [
+  `${dim("# 1. Install")}`,
+  `${fg("brew install jt-systems/installguard/installguard")}`,
+  ``,
+  `${dim("# 2. Scan any npm / pnpm / yarn project")}`,
+  `${fg("cd ~/work/your-project")}`,
+  `${fg("installguard scan")}`,
+  ``,
+  `${dim("# 3. Wire it into CI (exit code 1 on block)")}`,
+  `${fg("installguard ci --summary-file summary.json")}`,
+].join("\n");
 ---
 
-<Terminal title="macOS · Linux · WSL"
-><span class="text-slate-500"># 1. Install</span>
-<span class="text-slate-200">brew install jt-systems/installguard/installguard</span>
-
-<span class="text-slate-500"># 2. Scan any npm / pnpm / yarn project</span>
-<span class="text-slate-200">cd ~/work/your-project</span>
-<span class="text-slate-200">installguard scan</span>
-
-<span class="text-slate-500"># 3. Wire it into CI (exit code 1 on block)</span>
-<span class="text-slate-200">installguard ci --summary-file summary.json</span></Terminal>
+<Terminal title="macOS · Linux · WSL" body={body} />

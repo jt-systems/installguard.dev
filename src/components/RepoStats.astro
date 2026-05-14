@@ -27,9 +27,6 @@
 
 const REPO = "jt-systems/installguard";
 
-// Fallbacks if GitHub is unreachable or rate-limited at build time.
-// Bump these when you ship a release so a cold rebuild without
-// network access still shows something sensible.
 const FALLBACK = {
   tag: "v0.1.2",
   releaseUrl: `https://github.com/${REPO}/releases/latest`,
@@ -72,23 +69,14 @@ const { tag, releaseUrl, stars } = await loadStats();
 const formattedStars = stars.toLocaleString("en-US");
 ---
 
-<div class="not-content flex flex-wrap items-center gap-1.5 text-[0.6875rem] font-medium tracking-[0.08em] uppercase">
-  <a
-    href={releaseUrl}
-    class="inline-flex items-center gap-1.5 rounded-full border border-emerald-500/30 bg-emerald-500/5 px-2.5 py-1 font-mono text-emerald-300 transition hover:border-emerald-400/60 hover:bg-emerald-500/10"
-  >
-    <span class="size-1.5 rounded-full bg-emerald-400"></span>
-    {tag}
-  </a>
-  <a
-    href={`https://github.com/${REPO}/stargazers`}
-    class="inline-flex items-center gap-1.5 rounded-full border border-slate-700/60 bg-slate-900/40 px-2.5 py-1 font-mono text-slate-300 transition hover:border-slate-500 hover:text-slate-100"
-  >
+<div class="not-content flex flex-wrap items-center gap-2">
+  <a href={releaseUrl} class="ig-badge ig-badge--accent">{tag}</a>
+  <a href={`https://github.com/${REPO}/stargazers`} class="ig-badge">
     <svg viewBox="0 0 16 16" class="size-3 fill-current" aria-hidden="true">
       <path d="M8 .25a.75.75 0 0 1 .673.418l1.882 3.815 4.21.612a.75.75 0 0 1 .416 1.279l-3.046 2.97.719 4.192a.75.75 0 0 1-1.088.791L8 12.347l-3.766 1.98a.75.75 0 0 1-1.088-.79l.72-4.194L.818 6.374a.75.75 0 0 1 .416-1.28l4.21-.611L7.327.668A.75.75 0 0 1 8 .25Z" />
     </svg>
     {formattedStars}
   </a>
-  <span class="inline-flex items-center rounded-full border border-slate-700/60 bg-slate-900/40 px-2.5 py-1 font-mono text-slate-300">Apache-2.0</span>
-  <span class="inline-flex items-center rounded-full border border-slate-700/60 bg-slate-900/40 px-2.5 py-1 font-mono text-slate-300">macOS · Linux · Windows</span>
+  <span class="ig-badge">Apache-2.0</span>
+  <span class="ig-badge">macOS · Linux · Windows</span>
 </div>

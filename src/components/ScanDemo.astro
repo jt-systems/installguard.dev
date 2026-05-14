@@ -1,26 +1,38 @@
 ---
 /**
  * ScanDemo.astro — fixed sample of `installguard scan` output styled
- * with inline-coloured spans. Lives outside MDX because multi-line
- * <pre><code> with blank lines confuses the MDX paragraph parser.
+ * with inline-coloured spans. Built as a template-literal string and
+ * passed through Terminal's `body` prop so newlines survive Astro's
+ * whitespace normalisation.
  */
 import Terminal from "./Terminal.astro";
+
+const dim = (t: string) => `<span style="color:#64748b">${t}</span>`;
+const mid = (t: string) => `<span style="color:#94a3b8">${t}</span>`;
+const fg = (t: string) => `<span style="color:#e2e8f0">${t}</span>`;
+const ok = (t: string) => `<span style="color:#34d399">${t}</span>`;
+const warn = (t: string) => `<span style="color:#fbbf24">${t}</span>`;
+const err = (t: string) => `<span style="color:#fb7185">${t}</span>`;
+
+const body = [
+  `${dim("$")} ${fg("installguard scan")}`,
+  `${ok("  ✓ 1,273 packages cleared")}`,
+  `${dim("    policy v1 · cache hit 99.8% · 1.84s")}`,
+  ``,
+  `${err("  ✗ block")}     ${fg("react-toolkit-utils@2.0.0")}`,
+  `              ${dim("name-squat         ")}${mid("distance-1 from `react-toolkit` (38M dl/wk)")}`,
+  `              ${dim("suspicious-script  ")}${mid("postinstall executes base64-decoded payload")}`,
+  ``,
+  `${err("  ✗ block")}     ${fg("@acme/auth@4.1.7")}`,
+  `              ${dim("publisher-change   ")}${mid("new maintainer account, registered 6h ago")}`,
+  ``,
+  `${warn("  ⚠ warn")}      ${fg("color-utils@1.4.2")}`,
+  `              ${dim("release-age        ")}${mid("published 18h ago (24h cooling-off)")}`,
+  ``,
+  `${dim("  Summary  ")}${ok("1273 allow")}${dim(" · ")}${warn("1 warn")}${dim(" · ")}${err("2 block")}`,
+  `${dim("$")} ${dim("echo $?")}`,
+  `${fg("1")}`,
+].join("\n");
 ---
 
-<Terminal title="~/work/api · installguard scan"
-><span class="text-slate-500">$ </span><span class="text-slate-200">installguard scan</span>
-<span class="text-emerald-400">  ✓ 1,273 packages cleared</span><span class="text-slate-500">  ·  policy v1  ·  cache hit 99.8%  ·  1.84s</span>
-
-<span class="text-rose-400">  ✗ block</span><span class="text-slate-300">    </span><span class="text-slate-100">react-toolkit-utils@2.0.0</span>
-<span class="text-slate-500">              name-squat  </span><span class="text-slate-400">distance-1 from `react-toolkit` (38M dl/wk)</span>
-<span class="text-slate-500">              suspicious-script  </span><span class="text-slate-400">postinstall executes base64-decoded payload</span>
-
-<span class="text-rose-400">  ✗ block</span><span class="text-slate-300">    </span><span class="text-slate-100">@acme/auth@4.1.7</span>
-<span class="text-slate-500">              publisher-change  </span><span class="text-slate-400">new maintainer account, registered 6h ago</span>
-
-<span class="text-amber-400">  ⚠ warn</span><span class="text-slate-300">     </span><span class="text-slate-100">color-utils@1.4.2</span>
-<span class="text-slate-500">              release-age-below-threshold  </span><span class="text-slate-400">published 18h ago (24h cooling-off)</span>
-
-<span class="text-slate-500">  Summary: </span><span class="text-emerald-400">1273 allow</span><span class="text-slate-500"> · </span><span class="text-amber-400">1 warn</span><span class="text-slate-500"> · </span><span class="text-rose-400">2 block</span>
-<span class="text-slate-500">$ </span><span class="text-slate-500">echo $?</span>
-<span class="text-slate-300">1</span></Terminal>
+<Terminal title="~/work/api · installguard scan" body={body} />
