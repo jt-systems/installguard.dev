@@ -27,8 +27,14 @@
 
 const REPO = "jt-systems/installguard";
 
+// Bumped on each release as belt-and-braces: Cloudflare Workers
+// Builds run from a shared egress IP pool that is frequently
+// rate-limited against the unauthenticated GitHub API (60 req/hr
+// shared with every other CF customer building at the same
+// minute). When the fetch falls back, we still want a sensible
+// number on screen rather than a nine-month-old version.
 const FALLBACK = {
-  tag: "v0.1.2",
+  tag: "v0.1.4",
   releaseUrl: `https://github.com/${REPO}/releases/latest`,
   stars: 0,
 };
@@ -49,7 +55,13 @@ async function loadStats() {
         headers,
       }),
     ]);
-    if (!repoRes.ok || !relRes.ok) return FALLBACK;
+    if (!repoRes.ok || !relRes.ok) {
+      console.warn(
+        `[RepoStats] GitHub API non-OK: repo=${repoRes.status} release=${relRes.status}` +
+          (token ? "" : " (no GITHUB_TOKEN — likely shared-IP rate limit)"),
+      );
+      return FALLBACK;
+    }
     const repo = (await repoRes.json()) as { stargazers_count?: number };
     const rel = (await relRes.json()) as {
       tag_name?: string;
@@ -60,7 +72,8 @@ async function loadStats() {
       releaseUrl: rel.html_url ?? FALLBACK.releaseUrl,
       stars: repo.stargazers_count ?? FALLBACK.stars,
     };
-  } catch {
+  } catch (err) {
+    console.warn(`[RepoStats] fetch threw: ${(err as Error).message}`);
     return FALLBACK;
   }
 }
