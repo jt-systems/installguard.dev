@@ -62,6 +62,7 @@ export default defineConfig({
           label: "Recipes",
           items: [
             { label: "GitHub Actions", slug: "recipes/github-actions" },
+            { label: "GitLab CI", slug: "recipes/gitlab-ci" },
             { label: "Monorepos", slug: "recipes/monorepos" },
             { label: "Expo + monorepo case study", slug: "recipes/expo-monorepo" },
           ],
