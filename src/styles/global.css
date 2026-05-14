@@ -701,3 +701,19 @@
 @media (min-width: 900px) {
   .ig-grid--3 { grid-template-columns: repeat(3, 1fr); }
 }
+
+/* ---------- Mobile menu hit target ----------
+ * Starlight's mobile menu button is `border-radius: 50%` over a 32×32
+ * box. Chromium hit-tests rounded shapes against the visible disk, not
+ * the bounding box, so the four corner triangles fall through to the
+ * fixed header behind the button — taps near the edge of the visible
+ * disk silently miss. Reducing the radius to a squircle keeps the
+ * rest of the visual language (cards/buttons all use 0.5rem) and
+ * recovers the full bounding box as a hit target without enlarging
+ * the chrome. Open-state X picks up the same shape automatically.
+ */
+@media (max-width: 50rem) {
+  starlight-menu-button button {
+    border-radius: 0.5rem;
+  }
+}
