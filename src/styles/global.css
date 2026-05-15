@@ -748,5 +748,15 @@
   starlight-menu-button button {
     border-radius: 0.5rem;
     z-index: 11;
+    /* Promote the button to its own GPU compositing layer.
+     * backdrop-filter on the header's ::before still causes the header
+     * to be composited at z-index 10.  Without an explicit layer, mobile
+     * Chromium / WebKit can dispatch touch events to the header's
+     * compositing layer rather than the button that paints above it.
+     * will-change: transform guarantees the button gets its own layer
+     * at z-index 11, so touch hit-testing always resolves to the button. */
+    will-change: transform;
+    /* Remove the 300 ms tap delay on mobile browsers that still apply it. */
+    touch-action: manipulation;
   }
 }
