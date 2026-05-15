@@ -5,6 +5,16 @@ description: What shipped in each InstallGuard release.
 
 The canonical changelog lives in the repo at [`CHANGELOG.md`](https://github.com/jt-systems/installguard/blob/main/CHANGELOG.md). This page mirrors the user-facing highlights.
 
+## 0.3.1 — 2026-05-15
+
+Three small correctness fixes — none change a verdict on existing fixtures, but each closes a "silent in the wrong direction" hole.
+
+* **`--frozen` replay no longer loses the PyPI source kind.** The lock format records `source: "pypi"` since 0.2.7, but the rebuild path was missing the `pypi` arm and collapsed it back to `Source::Registry`. Decisions were unaffected (both are non-exotic), but JSON / explain output mis-attributed PyPI deps as generic registry entries when reading a v2 lock.
+
+* **Scorecard repo discovery no longer fails open.** Transport, 5xx, and decode failures on the npm packument / PyPI metadata fetch (used to discover the upstream repo URL) used to collapse to "no signal". They now surface as `Signal::Unavailable`. "No `repository` field recorded" is still silent (legitimate absence). Matters most if you've disabled the dedicated `npm-registry` / `pypi-registry` providers and rely on Scorecard alone.
+
+* **`requireProvenance` honesty pass extended to user-facing docs.** The 0.2.6 cleanup fixed the code-level overclaims; this round fixes the [`requireProvenance`](/usage/policy-yaml/) row on the Policy YAML reference and the trust-score factor list in the [whitepaper](/whitepaper/) so neither implies the cryptographic DSSE / Rekor verification we don't yet perform. M9 still tracks the verified upgrade.
+
 ## 0.3.0 — 2026-05-15
 
 **Release-binary signing and SLSA Build Level 3 provenance.** The release workflow now Cosign-signs every published binary plus `checksums.txt`, and emits a SLSA v1.0 Build Level 3 provenance attestation covering the same artefacts. This closes the "known-pending" item from 0.2.9 and the long-standing v0.3 Sigstore signing milestone.

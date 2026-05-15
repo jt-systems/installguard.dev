@@ -26,7 +26,7 @@ Point your editor at it for auto-completion and inline validation — see [Edito
 | `flagDeprecated` | bool | `true` | Block deprecated versions. |
 | `detectVersionSurfaceChange` | bool | `false` | Flag new `bin`/script entries vs. prior release. |
 | `minMaintainerAccountAgeDays` | int | `0` | Block versions published by accounts younger than this. |
-| `requireProvenance` | bool | `false` | Block packages without a provenance attestation. Recognises npm `--provenance` bundles and PyPI [PEP 740](https://peps.python.org/pep-0740/) Trusted Publisher attestations. |
+| `requireProvenance` | bool | `false` | Block packages without a publisher provenance attestation. Recognises npm `--provenance` bundles (in-toto subject digest must match the tarball's `dist.integrity`) and PyPI [PEP 740](https://peps.python.org/pep-0740/) Trusted Publisher attestations (PyPI Integrity API returns 200 for the file). Both are *claimed* attestations — we do not yet cryptographically verify the DSSE signature against a pinned Sigstore Fulcio root or walk the Rekor inclusion proof; that's tracked under ROADMAP M9. |
 | `minTrustScore` | 0–100 | `0` | Block packages with composite trust below threshold. |
 | `maxAdvisorySeverity` | low\|medium\|high\|critical | `critical` | Block on advisories at or above this severity. |
 | `requireLicense` | bool | `false` | Block when no SPDX expression is recorded. |
