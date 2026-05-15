@@ -5,6 +5,18 @@ description: What shipped in each InstallGuard release.
 
 The canonical changelog lives in the repo at [`CHANGELOG.md`](https://github.com/jt-systems/installguard/blob/main/CHANGELOG.md). This page mirrors the user-facing highlights.
 
+## 0.2.9 — 2026-05-15
+
+**Honesty pass on the README and the public docs site.** No behaviour change; this release closes three documentation overclaims that an external review surfaced.
+
+* **Landing page no longer claims InstallGuard "never opens an outbound socket".** The card describing zero side-effects was correct on `--frozen` and incorrect everywhere else (registry metadata, advisory lookups, project metadata, and Scorecard pulls all open sockets in the default scan path). Replaced with the truthful description plus an explicit pointer to the `--frozen` mode for true zero-network runs. The full lockfile coverage list (`uv.lock`, `poetry.lock`, pinned `requirements.txt`) was added at the same time so the card doesn't accidentally undercount our PyPI support.
+
+* **Install page no longer says "signed binaries".** Releases ship SHA-256 checksums and SLSA L3 attestations are produced for the SBOM and policy-evaluation predicates today, but the binaries themselves are not yet Cosign-signed and `checksums.txt` is not yet attested. The page now documents the present state plus the v0.3 roadmap item. The trust-model section on the [What is InstallGuard?](/start/what/) page carries the same correction.
+
+* **README quick-start reflects the current `0.2.x` series**, with the network-provider defaults spelled out so users can size the network blast radius before they invoke us.
+
+**Known pending (tracked, not blocking this release):** the release workflow itself does not yet Cosign-sign the published binaries or attest the checksums file. That work is captured in the ROADMAP under the v0.3 milestone alongside Sigstore Fulcio verification of npm/PyPI provenance bundles.
+
 ## 0.2.8 — 2026-05-15
 
 **Yarn workspace member `package.json` files are now walked for direct-dep detection.** The Yarn Berry adapter previously only read the root `package.json`. In a typical monorepo the root has only `devDependencies` (or is entirely empty under `private: true` with everything declared in `packages/*/package.json`); every member dep was therefore demoted to "transitive" and any `directOnly` policy rule silently no-op'd against them.

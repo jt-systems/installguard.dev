@@ -111,9 +111,16 @@ import ScanDemo from "../../components/ScanDemo.astro";
       <h3 class="ig-card-title">Side effects</h3>
       <p class="ig-card-body">
         Reads <span class="ig-chip">package-lock.json</span>,
-        <span class="ig-chip">pnpm-lock.yaml</span>, and
-        <span class="ig-chip">yarn.lock</span> directly. Never installs,
-        never executes lifecycle scripts, never opens an outbound socket.
+        <span class="ig-chip">pnpm-lock.yaml</span>,
+        <span class="ig-chip">yarn.lock</span>,
+        <span class="ig-chip">uv.lock</span>,
+        <span class="ig-chip">poetry.lock</span>, and pinned
+        <span class="ig-chip">requirements.txt</span> directly.
+        Never installs, never executes lifecycle scripts. Network
+        calls (registry metadata, OSV, deps.dev, Scorecard, PyPI
+        Integrity API) are opt-out per provider, and
+        <span class="ig-chip">--frozen</span> runs entirely from
+        <span class="ig-chip">installguard.lock</span> — zero sockets.
       </p>
     </article>
     <article class="ig-card">

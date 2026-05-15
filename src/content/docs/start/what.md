@@ -35,4 +35,4 @@ The patterns that ship malware before the public advisory feeds notice:
 
 ## Trust model
 
-Single static binary, signed releases, deterministic output. No daemon, no account, no telemetry. Reads your lockfile and the public npm registry; nothing else is required.
+Single static binary, deterministic output. No daemon, no account, no telemetry. Reads your lockfile plus your choice of registry metadata (npm, PyPI), advisory feed (OSV), project metadata (deps.dev), and OpenSSF Scorecard — every provider has a `--no-…` opt-out, and `--frozen` runs entirely from `installguard.lock` with zero network. Releases ship SHA-256 checksums; Cosign-signed binaries are on the v0.3 roadmap.
