@@ -5,6 +5,12 @@ description: What shipped in each InstallGuard release.
 
 The canonical changelog lives in the repo at [`CHANGELOG.md`](https://github.com/jt-systems/installguard/blob/main/CHANGELOG.md). This page mirrors the user-facing highlights.
 
+## 0.1.14 — 2026-05-15
+
+New [`installguard simulate`](/usage/simulate/) subcommand. Runs the same evaluation pipeline as [`scan`](/usage/scan/) once against the project's *current* policy, then re-evaluates every dependency against a *candidate* policy YAML using the **same signals** (no second network round-trip), and prints the per-package decision diff: which packages would be newly blocked, newly warned, newly allowed, or have their reasons change while staying in the same decision class. Pretty output groups by class with a `+`/`-` reason-code delta per package; `--format json` emits a stable machine-readable shape (`schemaVersion: 1`) with per-change before/after `details` and `reasonCodes`. Always exits `0` — simulate is advisory; gating belongs in `scan` or `ci`. Completes the [`explain`](/usage/explain/) (why was this blocked?) / [`doctor`](/usage/doctor/) (what should I add?) / `simulate` (what would happen if I added this?) triad — the propose → preview → merge loop for policy changes without spinning up a scratch repo or a network re-fetch.
+
+`--frozen` is rejected with a clear error: the lock stores decisions, not raw signals, so a candidate policy cannot be re-evaluated against it.
+
 ## 0.1.13 — 2026-05-15
 
 New [`installguard explain`](/usage/explain/) subcommand. Runs the same evaluation pipeline as `scan` / `doctor`, but for one `name@version` coordinate already present in the lockfile, prints the full per-package audit trail: every signal observed (rendered as compact JSON, one per line, so every variant round-trips losslessly), every reason produced (with stable kebab-case code, human summary, and remediation hint), and the trust-score breakdown with each weighted contribution and rationale. Pretty output is the default; `--format json` emits a stable machine-readable shape (`schemaVersion: 1`) suitable for piping into tooling. Always exits `0` — explain is informational; gating belongs in `scan` or `ci`. Pairs naturally with [`doctor`](/usage/doctor/) (0.1.12), which tells you *what* to allow.
