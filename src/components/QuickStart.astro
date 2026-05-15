@@ -6,14 +6,16 @@
  */
 import Terminal from "./Terminal.astro";
 
-const dim = (t: string) => `<span style="color:#64748b">${t}</span>`;
-const fg = (t: string) => `<span style="color:#e2e8f0">${t}</span>`;
+const ansi = (tone: string, text: string) =>
+  `<span class="ig-ansi ig-ansi--${tone}">${text}</span>`;
+const dim = (t: string) => ansi("dim", t);
+const fg = (t: string) => ansi("fg", t);
 
 const body = [
   `${dim("# 1. Install")}`,
   `${fg("brew install jt-systems/installguard/installguard")}`,
   ``,
-  `${dim("# 2. Scan any npm / pnpm / yarn project")}`,
+  `${dim("# 2. Scan any supported repo")}`,
   `${fg("cd ~/work/your-project")}`,
   `${fg("installguard scan")}`,
   ``,

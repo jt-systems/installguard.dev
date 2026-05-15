@@ -19,8 +19,17 @@ The output:
 ## Typical pipeline
 
 ```sh
+set +e
 installguard ci --summary-file summary.json
-installguard report --from summary.json --commit "$GITHUB_SHA" --exit-code "$?" \
+exit_code=$?
+set -e
+
+installguard report --from summary.json --commit "$GITHUB_SHA" --exit-code "$exit_code" \
   > comment.md
 # then post comment.md via your CI's comment-update mechanism
+exit "$exit_code"
 ```
+
+Capture the exit code before you run anything else, especially in
+`set -e` shells. The [GitHub Actions recipe](/recipes/github-actions/)
+shows the same pattern in workflow form.

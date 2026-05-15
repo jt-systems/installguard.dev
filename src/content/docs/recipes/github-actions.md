@@ -5,7 +5,7 @@ description: Run InstallGuard on every pull request and post a sticky comment.
 
 A complete workflow that:
 
-1. Caches both the npm install and the InstallGuard signal cache.
+1. Caches the InstallGuard signal cache.
 2. Runs `installguard ci` and produces a JSON summary.
 3. Posts (and updates) a sticky comment on the PR with the verdict.
 
@@ -37,7 +37,7 @@ jobs:
         uses: actions/cache@v4
         with:
           path: ~/.cache/installguard
-          key: installguard-${{ runner.os }}-${{ hashFiles('**/package-lock.json', '**/pnpm-lock.yaml', '**/yarn.lock') }}
+          key: installguard-${{ runner.os }}-${{ hashFiles('**/package-lock.json', '**/pnpm-lock.yaml', '**/yarn.lock', '**/uv.lock', '**/poetry.lock', '**/requirements.txt', '**/pyproject.toml') }}
           restore-keys: |
             installguard-${{ runner.os }}-
 
@@ -72,3 +72,8 @@ jobs:
 ## Why split scan and fail?
 
 Splitting the scan from the failure step lets the comment post even when the scan blocks. Otherwise the workflow fails before the comment job runs, and reviewers don't see *why* it failed without digging into the logs.
+
+If the same workflow also installs dependencies, add your package-manager
+cache separately (`actions/setup-node`, `actions/setup-python`, uv's
+cache, etc.). InstallGuard itself only needs the lockfile and its own
+signal cache.

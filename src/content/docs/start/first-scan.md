@@ -3,7 +3,9 @@ title: Your first scan
 description: Run InstallGuard against an existing npm, pnpm, yarn, or PyPI project in 30 seconds.
 ---
 
-In any directory that contains `package-lock.json`, `pnpm-lock.yaml`, or `yarn.lock`:
+In any directory that contains a supported lockfile, for example
+`package-lock.json`, `pnpm-lock.yaml`, `yarn.lock`, `uv.lock`,
+`poetry.lock`, or a hash-pinned `requirements.txt`:
 
 ```sh
 installguard scan
@@ -20,7 +22,7 @@ You will see one of three verdicts.
 
 ```
 ✓ InstallGuard — Clean
-  1276 packages — 1273 allow · 3 warn · 0 block
+  1276 packages — 1276 allow · 0 warn · 0 block
 
   All 1276 dependencies passed policy.
 ```
@@ -46,9 +48,10 @@ Next steps
   • If you believe this is a real attack, report to https://github.com/advisories/new
 ```
 
-A signal fired but your policy demoted it from `block` to `warn`. The
-install proceeds and exit code stays `0`. To make `scan` exit non-zero on
-any warning, use `installguard ci --max-warn 0` instead — see
+A signal fired and your policy rendered it as `warn` rather than
+`block`. The scan exits `0`, so your install flow can proceed. To make
+`scan` exit non-zero on any warning, use `installguard ci --max-warn 0`
+instead — see
 [Usage › ci](/usage/ci/).
 
 ## ✗ BLOCKED
@@ -63,7 +66,7 @@ BLOCK
       ↳ allowlist the package under scripts.allow if you trust the publisher
 
 Next steps
-  • Investigate the package on its registry page (e.g. https://www.npmjs.com/package/fsevents/v/2.3.3)
+  • Investigate the package on its registry page (e.g. npmjs.com or PyPI)
   • If intentional, allowlist in installguard.yaml (see `installguard schema`)
   • Once green, freeze decisions with `installguard lock` for reproducible CI
   • If you believe this is a real attack, report to https://github.com/advisories/new

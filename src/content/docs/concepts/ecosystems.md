@@ -5,10 +5,10 @@ description: How InstallGuard supports npm-family and PyPI projects, what's gate
 
 InstallGuard is one tool that gates dependencies for two ecosystem
 families today: the **npm family** (npm, pnpm, yarn) and **PyPI**
-(uv, pip-compile). Both go through the same policy engine and
-produce the same shape of decisions, lockfile, SBOM, and
-attestation. This page is the source of truth for what's gated
-where.
+(`uv.lock`, `poetry.lock`, and hash-pinned `requirements.txt`).
+Both go through the same policy engine and produce the same shape of
+decisions, lockfile, SBOM, and attestation. This page is the source of
+truth for what's gated where.
 
 ## Supported lockfiles
 

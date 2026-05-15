@@ -126,8 +126,14 @@ The URL above tracks `main` and will reflect any new fields the next
 release adds. To pin to a specific InstallGuard version, swap `main`
 for the tag:
 
+```text
+https://raw.githubusercontent.com/jt-systems/installguard/<tag>/schemas/installguard-policy.schema.json
 ```
-https://raw.githubusercontent.com/jt-systems/installguard/v0.1.12/schemas/installguard-policy.schema.json
+
+For example, if your CI is pinned to `v0.3.3`, use:
+
+```text
+https://raw.githubusercontent.com/jt-systems/installguard/v0.3.3/schemas/installguard-policy.schema.json
 ```
 
 This is rarely needed — the schema is additive between minor releases —

@@ -7,7 +7,10 @@ description: Scan a lockfile and render verdicts to the terminal.
 installguard scan [--policy installguard.yaml] [--format pretty|human|json]
 ```
 
-Auto-detects `package-lock.json`, `pnpm-lock.yaml`, or `yarn.lock` in the current directory. Reads `installguard.yaml` if present; uses defaults otherwise.
+Auto-detects supported lockfiles in the current directory:
+`package-lock.json`, `pnpm-lock.yaml`, `yarn.lock`, `uv.lock`,
+`poetry.lock`, and hash-pinned `requirements.txt`. Reads
+`installguard.yaml` if present; uses defaults otherwise.
 
 ## Formats
 

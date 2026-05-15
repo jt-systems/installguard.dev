@@ -20,9 +20,9 @@ const { title, body } = Astro.props;
 
 <div class="ig-terminal">
   <div class="ig-terminal-bar">
-    <span class="ig-terminal-dot" style="background:#ef4444"></span>
-    <span class="ig-terminal-dot" style="background:#f59e0b"></span>
-    <span class="ig-terminal-dot" style="background:#10b981"></span>
+    <span class="ig-terminal-dot ig-terminal-dot--red"></span>
+    <span class="ig-terminal-dot ig-terminal-dot--amber"></span>
+    <span class="ig-terminal-dot ig-terminal-dot--green"></span>
     {title && <span class="ig-terminal-title">{title}</span>}
   </div>
   <pre class="ig-terminal-body"><code set:html={body} /></pre>

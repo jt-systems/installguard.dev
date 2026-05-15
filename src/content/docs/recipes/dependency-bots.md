@@ -22,9 +22,13 @@ on:
   pull_request:
     paths:
       - "**/package.json"
+      - "**/pyproject.toml"
       - "**/package-lock.json"
       - "**/pnpm-lock.yaml"
       - "**/yarn.lock"
+      - "**/uv.lock"
+      - "**/poetry.lock"
+      - "**/requirements.txt"
 
 permissions:
   contents: read
@@ -49,7 +53,7 @@ jobs:
         uses: actions/cache@v4
         with:
           path: ~/.cache/installguard
-          key: installguard-${{ runner.os }}-${{ hashFiles('**/package-lock.json', '**/pnpm-lock.yaml', '**/yarn.lock') }}
+          key: installguard-${{ runner.os }}-${{ hashFiles('**/package-lock.json', '**/pnpm-lock.yaml', '**/yarn.lock', '**/uv.lock', '**/poetry.lock', '**/requirements.txt', '**/pyproject.toml') }}
           restore-keys: |
             installguard-${{ runner.os }}-
 

@@ -7,12 +7,14 @@
  */
 import Terminal from "./Terminal.astro";
 
-const dim = (t: string) => `<span style="color:#64748b">${t}</span>`;
-const mid = (t: string) => `<span style="color:#94a3b8">${t}</span>`;
-const fg = (t: string) => `<span style="color:#e2e8f0">${t}</span>`;
-const ok = (t: string) => `<span style="color:#34d399">${t}</span>`;
-const warn = (t: string) => `<span style="color:#fbbf24">${t}</span>`;
-const err = (t: string) => `<span style="color:#fb7185">${t}</span>`;
+const ansi = (tone: string, text: string) =>
+  `<span class="ig-ansi ig-ansi--${tone}">${text}</span>`;
+const dim = (t: string) => ansi("dim", t);
+const mid = (t: string) => ansi("mid", t);
+const fg = (t: string) => ansi("fg", t);
+const ok = (t: string) => ansi("ok", t);
+const warn = (t: string) => ansi("warn", t);
+const err = (t: string) => ansi("err", t);
 
 const body = [
   `${dim("$")} ${fg("installguard scan")}`,

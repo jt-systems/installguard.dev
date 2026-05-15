@@ -623,10 +623,24 @@
 }
 
 .ig-terminal-dot {
+  display: block;
+  flex: 0 0 auto;
   width: 0.625rem;
   height: 0.625rem;
   border-radius: 9999px;
   opacity: 0.85;
+}
+
+.ig-terminal-dot--red {
+  background: #ef4444;
+}
+
+.ig-terminal-dot--amber {
+  background: #f59e0b;
+}
+
+.ig-terminal-dot--green {
+  background: #10b981;
 }
 
 .ig-terminal-title {
@@ -655,6 +669,34 @@
 .ig-terminal-body::-webkit-scrollbar-thumb {
   background: rgba(148, 163, 184, 0.25);
   border-radius: 9999px;
+}
+
+.ig-ansi {
+  color: inherit;
+}
+
+.ig-ansi--dim {
+  color: #64748b;
+}
+
+.ig-ansi--mid {
+  color: #94a3b8;
+}
+
+.ig-ansi--fg {
+  color: #e2e8f0;
+}
+
+.ig-ansi--ok {
+  color: #34d399;
+}
+
+.ig-ansi--warn {
+  color: #fbbf24;
+}
+
+.ig-ansi--err {
+  color: #fb7185;
 }
 
 @media (min-width: 640px) {

@@ -48,6 +48,10 @@ export default defineConfig({
           href: "https://github.com/jt-systems/installguard",
         },
       ],
+      components: {
+        ThemeProvider: "./src/components/starlight/ThemeProvider.astro",
+        ThemeSelect: "./src/components/starlight/ThemeSelect.astro",
+      },
       customCss: ["./src/styles/global.css"],
       sidebar: [
         {

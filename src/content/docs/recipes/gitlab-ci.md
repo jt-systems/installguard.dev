@@ -40,12 +40,12 @@ Pin to a release tag once you're past evaluation:
 
 ```yaml
 include:
-  - remote: 'https://raw.githubusercontent.com/jt-systems/installguard/v0.1.12/ci/gitlab/installguard.gitlab-ci.yml'
+  - remote: 'https://raw.githubusercontent.com/jt-systems/installguard/v0.3.3/ci/gitlab/installguard.gitlab-ci.yml'
 
 installguard:
   extends: .installguard
   variables:
-    INSTALLGUARD_REF: "v0.1.12"
+    INSTALLGUARD_REF: "v0.3.3"
 ```
 
 ## Configuration
@@ -126,7 +126,7 @@ The structure is:
    pipelines via `$CARGO_HOME`). Replace this with a `curl` of the
    pre-built musl binary from the GitHub release for faster cold starts:
    ```sh
-   curl -L https://github.com/jt-systems/installguard/releases/download/v0.1.12/installguard-x86_64-unknown-linux-musl \
+   curl -L https://github.com/jt-systems/installguard/releases/download/v0.3.3/installguard-x86_64-unknown-linux-musl \
      -o /usr/local/bin/installguard && chmod +x /usr/local/bin/installguard
    ```
 2. **`script`** — `installguard ci --summary-file installguard-summary.json`,

@@ -1,0 +1,47 @@
+---
+import { Icon } from "@astrojs/starlight/components";
+---
+
+{/* Keep this inlined so the document theme is set before paint. */}
+<script is:inline>
+  window.StarlightThemeProvider = (() => {
+    const parseTheme = (theme) =>
+      theme === "auto" || theme === "dark" || theme === "light" ? theme : "dark";
+
+    const storedTheme = parseTheme(
+      typeof localStorage !== "undefined" && localStorage.getItem("starlight-theme")
+    );
+    const resolvedTheme =
+      storedTheme === "auto" && window.matchMedia("(prefers-color-scheme: light)").matches
+        ? "light"
+        : storedTheme === "auto"
+          ? "dark"
+          : storedTheme;
+
+    document.documentElement.dataset.theme = resolvedTheme;
+
+    return {
+      updatePickers(theme = storedTheme) {
+        document.querySelectorAll("starlight-theme-select").forEach((picker) => {
+          const select = picker.querySelector("select");
+          if (select) select.value = theme;
+          /** @type {HTMLTemplateElement | null} */
+          const tmpl = document.querySelector("#theme-icons");
+          const newIcon = tmpl && tmpl.content.querySelector("." + theme);
+          if (newIcon) {
+            const oldIcon = picker.querySelector("svg.label-icon");
+            if (oldIcon) {
+              oldIcon.replaceChildren(...newIcon.cloneNode(true).childNodes);
+            }
+          }
+        });
+      },
+    };
+  })();
+</script>
+
+<template id="theme-icons">
+  <Icon name="sun" class="light" />
+  <Icon name="moon" class="dark" />
+  <Icon name="laptop" class="auto" />
+</template>
