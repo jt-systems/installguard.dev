@@ -5,6 +5,21 @@ description: What shipped in each InstallGuard release.
 
 The canonical changelog lives in the repo at [`CHANGELOG.md`](https://github.com/jt-systems/installguard/blob/main/CHANGELOG.md). This page mirrors the user-facing highlights.
 
+## 0.2.0 — 2026-05-15
+
+**First non-npm ecosystem.** PyPI lockfiles now parse, evaluate, and report alongside npm / pnpm / yarn projects. The signal providers will follow in 0.2.x; this release ships the adapter so users can immediately see PyPI dependencies in `scan`, `ci`, [`lock`](/usage/lock/), [`sbom`](/usage/sbom/), and [`vex`](/usage/vex/) output, and so policy authors can start writing forward-compatible `pypi:`-prefixed allowlists today.
+
+Two lockfile formats supported:
+
+* **`uv.lock`** — the canonical TOML lockfile produced by [uv](https://docs.astral.sh/uv/). Schema version 1. Pulls per-package sdist/wheel URLs and `sha256` hashes; the root virtual package is suppressed; transitive vs direct is computed from the root's `dependencies` list.
+* **`requirements.txt`** — only when generated with hashes (`uv pip compile --generate-hashes` or `pip-compile --generate-hashes`). Hash-less files are rejected with a clear actionable error: a wishlist is not a lockfile, and shipping a lockfile-shaped adapter against one would silently lower the bar.
+
+Names are normalised per [PEP 503](https://peps.python.org/pep-0503/#normalized-names) throughout (`Re_quests` → `requests`); ecosystem matchers and cache keys all see the normalised form.
+
+Lockfile lookup priority is now `pnpm-lock.yaml` → `yarn.lock` → `package-lock.json` → `uv.lock` → `requirements.txt`. npm-family lockfiles still win when both are present, so polyglot repos running InstallGuard from the JS root keep their existing behaviour.
+
+Until PyPI signal providers ship in 0.2.x, PyPI dependencies resolve to `allow` with empty signals — visible in scan output and SBOM components, but not gated. Existing 0.1.x policies, locks, and audit logs are forward-compatible without changes.
+
 ## 0.1.19 — 2026-05-15
 
 **Docs catch-up: every subcommand now has a usage page.** The Usage section grew from 9 to 18 pages, covering every command that ships in the binary. Previously undocumented:

@@ -1,6 +1,6 @@
 ---
 title: Your first scan
-description: Run InstallGuard against an existing JavaScript project in 30 seconds.
+description: Run InstallGuard against an existing npm, pnpm, yarn, or PyPI project in 30 seconds.
 ---
 
 In any directory that contains `package-lock.json`, `pnpm-lock.yaml`, or `yarn.lock`:
