@@ -52,6 +52,8 @@ export default defineConfig({
         ThemeProvider: "./src/components/starlight/ThemeProvider.astro",
         ThemeSelect: "./src/components/starlight/ThemeSelect.astro",
       },
+      // Keep search static and zero-infra via Starlight's built-in Pagefind UI.
+      pagefind: true,
       customCss: ["./src/styles/global.css"],
       sidebar: [
         {
