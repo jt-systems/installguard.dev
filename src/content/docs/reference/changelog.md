@@ -5,6 +5,17 @@ description: What shipped in each InstallGuard release.
 
 The canonical changelog lives in the repo at [`CHANGELOG.md`](https://github.com/jt-systems/installguard/blob/main/CHANGELOG.md). This page mirrors the user-facing highlights.
 
+## 0.2.1 — 2026-05-15
+
+**PyPI dependencies are now scored and gated.** The 0.2.0 adapter made PyPI deps visible; this release wires three signal providers to them so they actually participate in policy decisions.
+
+* New crate `installguard-signal-pypi-registry` calling the [PyPI JSON API](https://docs.pypi.org/api/json/) and emitting `published_at` (earliest `upload_time_iso_8601` across the sdist + wheel files for the resolved version) and `deprecated_version` when the release is yanked ([PEP 592](https://peps.python.org/pep-0592/)).
+* OSV advisory provider now speaks PyPI: `Ecosystem::Pypi` maps to the OSV `"PyPI"` ecosystem label, so GHSA / PyPA advisories land on Python deps with the same severity bucketing as npm-family. This is the headline value of the slice — `cryptography@<X`, `requests@2.31.0`, `urllib3@<1.26.18` etc. now block / warn per the same `defaults.advisorySeverity` policy as their npm equivalents.
+* deps.dev provider: system selector parameterised; PyPI version records fetch from `/v3alpha/systems/pypi/...` and the in-process cache is keyed by `(system, name@version)` so npm and PyPI never alias.
+* New CLI flag [`--no-pypi-registry`](/usage/scan/) for fully offline / air-gapped CI runs (mirrors `--no-osv` / `--no-deps-dev` / `--no-scorecard`).
+
+Deferred to follow-up slices: PyPI maintainer / publisher signals (the JSON API doesn't expose per-version publisher identity); OpenSSF Scorecard for PyPI deps (needs `info.project_urls` plumbed into the Scorecard provider); `setup.py` static analysis for sdists (different provider shape — needs download + extract).
+
 ## 0.2.0 — 2026-05-15
 
 **First non-npm ecosystem.** PyPI lockfiles now parse, evaluate, and report alongside npm / pnpm / yarn projects. The signal providers will follow in 0.2.x; this release ships the adapter so users can immediately see PyPI dependencies in `scan`, `ci`, [`lock`](/usage/lock/), [`sbom`](/usage/sbom/), and [`vex`](/usage/vex/) output, and so policy authors can start writing forward-compatible `pypi:`-prefixed allowlists today.
