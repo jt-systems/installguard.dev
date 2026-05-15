@@ -3,47 +3,47 @@ title: What is InstallGuard?
 description: Understand what InstallGuard does, what it doesn't, and where it fits.
 ---
 
-InstallGuard is a **cross-ecosystem supply-chain policy gate** for `npm install`, `pnpm install`, `yarn install`, and `pip install` / `uv sync` / `poetry install`.
+InstallGuard is a **cross-ecosystem supply-chain policy gate** for npm, pnpm, yarn, and PyPI.
 
-It reads your lockfile, asks a fixed set of trust signals about every resolved package, then renders a single decision per dependency: **allow**, **warn**, or **block**. The decision is driven by a YAML policy you check into the repo. If anything blocks, InstallGuard exits non-zero and your CI step fails — *before* the install ever runs.
+It reads your lockfile, evaluates a fixed set of trust signals against every resolved package, and renders one decision per dependency: **allow**, **warn**, or **block**. The decision is driven by a YAML policy in your repo. A single block exits non-zero — *before* the install runs.
 
 ## What it catches
 
-The patterns that ship malware before the public advisory feeds notice:
+The patterns that ship malware before public advisory feeds notice:
 
 - **Typosquats and homoglyphs** — `axois` next to `axios`, `ｒeact` (Cyrillic) next to `react`.
-- **Brand-new versions** — a package version published 18 minutes ago, downloaded by your CI 19 minutes later.
-- **Suspicious lifecycle scripts** — `postinstall` that pipes `curl` into `bash`, registry tarballs that ship new `bin` entries between patch releases.
+- **Brand-new versions** — published 18 minutes ago, downloaded by your CI 19 minutes later.
+- **Suspicious lifecycle scripts** — `postinstall` piping `curl` into `bash`; new `bin` entries between patch releases.
 - **Dist-tag rollbacks** — `latest` moving backwards across a major boundary.
-- **Publisher changes** — a different npm account publishing the next patch release.
-- **Known advisories** — OSV / GHSA matched at the exact resolved version.
+- **Publisher changes** — a different npm account publishing the next patch.
+- **Known advisories** — OSV / GHSA at the exact resolved version.
 
 ## What it isn't
 
-- Not a runtime sandbox. (See [the roadmap](https://github.com/jt-systems/installguard/blob/main/ROADMAP.md) — install-time hardening is M5.)
+- Not a runtime sandbox. Install-time hardening is [ROADMAP M5](https://github.com/jt-systems/installguard/blob/main/ROADMAP.md).
 - Not a vulnerability database. It uses OSV; it doesn't try to be one.
-- Not a replacement for `npm audit`. It runs *alongside* it — `npm audit` tells you about known CVEs in your tree; InstallGuard tells you which packages you should never have installed in the first place.
-- Not a replacement for pnpm's built-in install-time controls. See below.
+- Not a replacement for `npm audit`. Runs alongside: `npm audit` flags known CVEs in your tree; InstallGuard flags packages you should never have installed in the first place.
+- Not a replacement for pnpm's built-in install-time controls — see below.
 
 ## How does this compare to pnpm 11?
 
-A fair question, and one we get a lot. As of pnpm 11.x, the installer itself ships strong supply-chain defaults: [`minimumReleaseAge`](https://pnpm.io/settings#minimumreleaseage) (default 1440 minutes), [`allowBuilds`](https://pnpm.io/settings#allowbuilds) and [`pnpm approve-builds`](https://pnpm.io/cli/approve-builds) for lifecycle-script gating, [`blockExoticSubdeps`](https://pnpm.io/settings#blockexoticsubdeps), and [`trustPolicy: no-downgrade`](https://pnpm.io/settings#trustpolicy). If your team is all-in on pnpm and your bar is "delay fresh packages, approve postinstalls, block weird sources," pnpm largely covers it.
+pnpm 11 ships strong install-time defaults: [`minimumReleaseAge`](https://pnpm.io/settings#minimumreleaseage), [`allowBuilds`](https://pnpm.io/settings#allowbuilds) + [`pnpm approve-builds`](https://pnpm.io/cli/approve-builds), [`blockExoticSubdeps`](https://pnpm.io/settings#blockexoticsubdeps), and [`trustPolicy: no-downgrade`](https://pnpm.io/settings#trustpolicy). For an all-pnpm JS shop with a "delay fresh, approve postinstalls, block weird sources" bar, that mostly covers it.
 
-InstallGuard is positioned **above** that layer, not against it. The differences are:
+InstallGuard sits **above** that layer:
 
 | | pnpm 11 | InstallGuard |
 |---|---|---|
-| **Ecosystem coverage** | pnpm only | npm, pnpm, yarn, PyPI (`uv.lock`, `poetry.lock`, pinned `requirements.txt`) under one policy |
-| **External risk signals** | Installer rules only | OSV / GHSA exact-version match, deps.dev metadata, OpenSSF Scorecard, publisher account-age, dist-tag rollback, version-surface drift, PyPI sdist inspection |
-| **Identity attacks** | — | Typosquat distance-1 + Unicode homoglyph detection against a curated high-traffic list |
-| **Script analysis** | Approve / deny | Pattern-based body scanning for obfuscated payloads in shell *and* Python `setup.py` |
-| **Evidence** | Installer config | `installguard.lock` (per-decision audit trail), `--frozen` replay, in-toto attestation, CycloneDX SBOM, OpenVEX |
+| **Ecosystems** | pnpm | npm, pnpm, yarn, PyPI (`uv.lock`, `poetry.lock`, pinned `requirements.txt`) under one policy |
+| **External signals** | — | OSV / GHSA, deps.dev metadata, OpenSSF Scorecard, publisher account-age, dist-tag rollback, version-surface drift, PyPI sdist inspection |
+| **Identity attacks** | — | Typosquat distance-1 + Unicode homoglyph detection |
+| **Script analysis** | Approve / deny | Pattern-based body scanning for obfuscated payloads (shell + Python `setup.py`) |
+| **Evidence** | Installer config | `installguard.lock` audit trail, `--frozen` replay, in-toto attestation, CycloneDX SBOM, OpenVEX |
 | **Triage UX** | — | `explain`, `doctor`, `simulate`, JUnit XML, GitHub PR sticky comment, GitLab report |
-| **Org policy plane** | Per-repo `pnpm-workspace.yaml` | Single YAML policy schema applied across mixed npm / pnpm / yarn / PyPI repos in one org |
+| **Org policy** | Per-repo `pnpm-workspace.yaml` | One YAML policy across mixed npm / pnpm / yarn / PyPI repos |
 
-The sharpest one-liner: **pnpm is the installer with strong built-in guardrails; InstallGuard is the policy-and-evidence layer that sits across pnpm, npm, yarn, and PyPI.**
+> **pnpm is the installer with strong built-in guardrails; InstallGuard is the policy-and-evidence layer that sits across pnpm, npm, yarn, and PyPI.**
 
-If your team standardised on pnpm and only ships JavaScript, you may not need InstallGuard. If you have a mixed estate, want OSV / Scorecard / publisher-change gating that pnpm doesn't try to provide, or need auditable evidence per CI run, that's the gap we fill.
+All-pnpm JS shop? You probably don't need InstallGuard. Mixed estate, OSV / Scorecard / publisher-change gating, or auditable per-CI-run evidence? That's our lane.
 
 ## Where it fits
 
@@ -56,4 +56,4 @@ If your team standardised on pnpm and only ships JavaScript, you may not need In
 
 ## Trust model
 
-Single static binary, deterministic output. No daemon, no account, no telemetry. Reads your lockfile plus your choice of registry metadata (npm, PyPI), advisory feed (OSV), project metadata (deps.dev), and OpenSSF Scorecard — every provider has a `--no-…` opt-out, and `--frozen` runs entirely from `installguard.lock` with zero network. Releases are signed via [Sigstore cosign keyless](https://docs.sigstore.dev/cosign/signing/overview/) and ship SLSA v1.0 build provenance — see [Verify a downloaded binary](/start/install/#verify-a-downloaded-binary) for the verification command.
+Single static binary, deterministic output. No daemon, no account, no telemetry. Reads your lockfile plus optional registry metadata (npm, PyPI), OSV, deps.dev, and Scorecard — every provider has a `--no-…` opt-out, and `--frozen` runs entirely from `installguard.lock` with zero network. Releases are signed via [Sigstore cosign keyless](https://docs.sigstore.dev/cosign/signing/overview/) and ship SLSA v1.0 build provenance — see [Verify a downloaded binary](/start/install/#verify-a-downloaded-binary).
