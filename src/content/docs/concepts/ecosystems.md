@@ -47,7 +47,7 @@ what differs is which providers can produce which signals.
 | `publisher_change` | ✅ npm registry (`_npmUser`) | ⏳ deferred (no per-version publisher in PyPI JSON) |
 | `maintainer_new_account` | ✅ npm registry | ⏳ deferred (same reason) |
 | `name_squat` | ✅ local heuristic | ✅ local heuristic |
-| `provenance_claimed` | ✅ npm registry | n/a (no equivalent today) |
+| `provenance_claimed` | ✅ npm registry | ✅ PyPI [Integrity API](https://docs.pypi.org/api/integrity/) ([PEP 740](https://peps.python.org/pep-0740/)) |
 | `scorecard_score` | ✅ Scorecard | ✅ Scorecard (via `info.project_urls` → GitHub) |
 
 A `⏳ deferred` cell means the signal is silent for that
@@ -84,16 +84,19 @@ exists in both ecosystems.
 * deps.dev licence metadata flows through `project_metadata`.
 * Yanked releases surface as `deprecated_version` with the
   maintainer's `yanked_reason`.
+* PyPI's [Integrity API](https://docs.pypi.org/api/integrity/) is
+  probed for [PEP 740](https://peps.python.org/pep-0740/) Trusted
+  Publisher attestations; presence emits `provenance_claimed`
+  (the same shape npm uses), so `policy.requireProvenance` and
+  the trust-score boost work identically across ecosystems.
 
 ## What's coming next
 
 Tracked in
 [ROADMAP M8](https://github.com/jt-systems/installguard/blob/main/ROADMAP.md#milestone-8--beyond-npm):
 
-* Maintainer / publisher signals for PyPI — likely via
-  [PEP 740](https://peps.python.org/pep-0740/) attestation
-  metadata as it rolls out across the index.
-* sdist `setup.py` static analysis.
+* sdist `setup.py` static analysis (would close `lifecycle_scripts`
+  and `suspicious_script` for PyPI).
 * crates.io, Go modules, RubyGems, Maven Central, NuGet, Hex.
 
 Each new adapter follows the same shape: a `LockfileAdapter`

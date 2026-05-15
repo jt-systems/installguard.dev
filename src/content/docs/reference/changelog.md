@@ -5,6 +5,16 @@ description: What shipped in each InstallGuard release.
 
 The canonical changelog lives in the repo at [`CHANGELOG.md`](https://github.com/jt-systems/installguard/blob/main/CHANGELOG.md). This page mirrors the user-facing highlights.
 
+## 0.2.4 — 2026-05-15
+
+**PEP 740 publisher attestations are now surfaced as `provenance_claimed` on PyPI deps.** The pypi-registry provider gains a second probe — after fetching `/pypi/<name>/<version>/json` for `published_at` and yanked status, it also asks PyPI's [Integrity API](https://docs.pypi.org/api/integrity/) (`GET /integrity/<name>/<version>/<filename>/provenance`) about the canonical sdist (or first wheel as fallback). A `200` response means the file was uploaded with a Trusted Publisher attestation that PyPI cryptographically verified at upload time; we surface that as `Signal::ProvenanceClaimed` with `bundle_url` set to the integrity URL itself.
+
+The signal shape matches npm provenance, so the `+10` trust-score boost applies identically across ecosystems and `policy.requireProvenance` now works for PyPI deps too. The probe is silent on `404` (most projects haven't adopted Trusted Publishers yet — absence isn't suspicious) and on network errors (the metadata signals remain authoritative).
+
+Smoke-tested live: `sigstore@3.6.1` now surfaces `provenance_claimed` against `pypi.org/integrity/sigstore/3.6.1/sigstore-3.6.1.tar.gz/provenance`, lifting its trust score to 98/100.
+
+This closes the `provenance_claimed` deferral on the PyPI side of the [ecosystems coverage matrix](/concepts/ecosystems/#signal-coverage). `publisher_change` and `maintainer_new_account` remain deferred — PyPI still does not expose a stable per-version publisher identity outside of the attestation envelope.
+
 ## 0.2.3 — 2026-05-15
 
 **Poetry lockfiles are now first-class.** The PyPI adapter grows a third format alongside `uv.lock` and hash-pinned `requirements.txt`: `poetry.lock`, the TOML lockfile written by [Poetry](https://python-poetry.org/). Lock-version `1.x` and `2.x` are both accepted; future major versions are rejected explicitly so a schema change can't slip through silently.
