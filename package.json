@@ -9,7 +9,9 @@
     "start": "astro dev",
     "build": "astro build",
     "preview": "astro preview",
-    "astro": "astro"
+    "astro": "astro",
+    "test:smoke": "pnpm build && playwright test",
+    "test:smoke:headed": "pnpm build && playwright test --headed"
   },
   "dependencies": {
     "@astrojs/starlight": "^0.39.2",
@@ -21,6 +23,7 @@
   },
   "packageManager": "pnpm@10.17.1",
   "devDependencies": {
-    "@cloudflare/workers-types": "^4.20260511.1"
+    "@cloudflare/workers-types": "^4.20260511.1",
+    "@playwright/test": "^1.60.0"
   }
 }

@@ -1,6 +1,8 @@
 # build output
 dist/
 .astro/
+playwright-report/
+test-results/
 
 # deps
 node_modules/
