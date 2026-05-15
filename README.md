@@ -21,6 +21,8 @@ Custom domain `installguard.dev` is wired in the Cloudflare dashboard.
 
 Security headers are pinned in [`public/_headers`](public/_headers).
 
+CI dogfoods InstallGuard itself before the browser smoke tests run, so dependency-policy regressions fail this repo the same way they would fail a user project.
+
 ## Content
 
 All docs live under `src/content/docs/` as Markdown / MDX. The sidebar is configured in [`astro.config.mjs`](astro.config.mjs); add a sidebar entry for any new page.

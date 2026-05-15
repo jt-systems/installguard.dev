@@ -1,4 +1,4 @@
-name: Smoke test
+name: Site CI
 
 on:
   push:
@@ -9,6 +9,40 @@ on:
 permissions: {}
 
 jobs:
+  installguard:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Cache InstallGuard signals
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/installguard
+          key: installguard-${{ runner.os }}-${{ hashFiles('pnpm-lock.yaml') }}
+          restore-keys: |
+            installguard-${{ runner.os }}-
+
+      - name: Install InstallGuard
+        run: |
+          curl -fsSL https://github.com/jt-systems/installguard/releases/download/v0.3.4/installguard-x86_64-unknown-linux-musl \
+            -o /usr/local/bin/installguard
+          chmod +x /usr/local/bin/installguard
+          installguard --version
+
+      - name: Run InstallGuard
+        run: installguard ci --path . --summary-file installguard-summary.json
+
+      - name: Upload InstallGuard summary
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: installguard-summary
+          path: installguard-summary.json
+          if-no-files-found: ignore
+
   smoke:
     runs-on: ubuntu-latest
     timeout-minutes: 15
