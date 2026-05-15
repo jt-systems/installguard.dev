@@ -1,6 +1,6 @@
 ---
-title: GitHub Actions
-description: Run InstallGuard on every pull request and post a sticky comment.
+title: InstallGuard in GitHub Actions
+description: Run InstallGuard in GitHub Actions on every pull request, fail builds on blocked dependencies, and post a sticky risk summary.
 ---
 
 A complete workflow that:

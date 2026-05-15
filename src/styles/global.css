@@ -227,14 +227,13 @@
   pointer-events: none;
 }
 
-/* ---------- Splash hero suppression ----------
- * We render a fully-custom hero in the MDX so we control type scale,
- * shield mark size, and the two-column rhythm. Starlight still emits
- * its `hero:` block when the frontmatter declares one — we keep that
- * for the metadata side-effects (og image, etc.) but hide the visual
- * markup so it can't double-render.
+/* ---------- Splash intro suppression ----------
+ * The homepage uses a fully custom hero and section rhythm. Starlight
+ * still emits a default title block for splash pages, so we hide that
+ * generated intro panel on no-sidebar pages and let the custom hero be
+ * the canonical above-the-fold content.
  */
-.hero {
+:root:not([data-has-sidebar]) .main-pane > main > .content-panel:first-child {
   display: none;
 }
 
@@ -243,11 +242,11 @@
  * handle their own centring. Docs pages keep Starlight's defaults
  * untouched to preserve the sidebar gutter.
  */
-:root[data-has-hero] .main-frame {
+:root:not([data-has-sidebar]) .main-frame {
   padding-inline: 0;
 }
 
-:root[data-has-hero] .main-pane > .content-panel:first-child > .sl-container {
+:root:not([data-has-sidebar]) .main-pane > main > .content-panel > .sl-container {
   max-width: 80rem;
   margin-inline: auto;
   padding-inline: clamp(1rem, 4vw, 2.5rem);

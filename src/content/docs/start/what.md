@@ -1,6 +1,6 @@
 ---
-title: What is InstallGuard?
-description: Understand what InstallGuard does, what it doesn't, and where it fits.
+title: What InstallGuard is and where it fits
+description: InstallGuard is a supply-chain policy gate for npm, pnpm, yarn, and PyPI that blocks risky dependencies before install.
 ---
 
 InstallGuard is a **cross-ecosystem supply-chain policy gate** for npm, pnpm, yarn, and PyPI.
