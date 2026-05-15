@@ -5,6 +5,16 @@ description: What shipped in each InstallGuard release.
 
 The canonical changelog lives in the repo at [`CHANGELOG.md`](https://github.com/jt-systems/installguard/blob/main/CHANGELOG.md). This page mirrors the user-facing highlights.
 
+## 0.2.3 — 2026-05-15
+
+**Poetry lockfiles are now first-class.** The PyPI adapter grows a third format alongside `uv.lock` and hash-pinned `requirements.txt`: `poetry.lock`, the TOML lockfile written by [Poetry](https://python-poetry.org/). Lock-version `1.x` and `2.x` are both accepted; future major versions are rejected explicitly so a schema change can't slip through silently.
+
+Direct-vs-transitive: poetry stores the project's direct dependency set in `pyproject.toml`, not the lockfile, so the adapter peeks at the sibling `pyproject.toml` when present. It reads `[tool.poetry.dependencies]`, `[tool.poetry.group.<name>.dependencies]` (any group, dev included), and PEP 621 `[project.dependencies]` (used by poetry 2.x in modern mode). PEP 508 markers and extras (`requests[security]>=2; python_version>='3.8'`) are stripped to recover the bare distribution name; the `python` pin is excluded. Without a sibling `pyproject.toml` every entry is conservatively flagged transitive — better than lying about provenance when we genuinely don't know.
+
+Source classification mirrors the other PyPI shapes: `[package.source]` with `type = "git"` produces `Source::Git` (with `resolved_reference` preferred over `reference`), `type = "url"` becomes `Source::Tarball`, `type = "file"` / `"directory"` become `Source::File`, and `"legacy"` (custom PEP 503 indexes) plus the registry default both fall through to `Source::Pypi`. Integrity prefers any non-`.whl` file (typically the sdist) over wheel hashes.
+
+Lockfile auto-discovery extended: `installguard explain` and `evaluate` now find `poetry.lock` in `--path` directories alongside `uv.lock` and `requirements.txt`. Smoke-tested live against a real `requests@2.31.0` `poetry.lock` + `pyproject.toml` pair — all six PyPI signals (published_at, three OSV advisories, project_metadata, scorecard_score) emit identically to the `uv.lock` path.
+
 ## 0.2.2 — 2026-05-15
 
 **OpenSSF Scorecard now scores PyPI dependencies.** The Scorecard provider previously skipped Python deps because it discovered the upstream source-repo URL via the npm packument. This release teaches it to read PyPI's `info.project_urls` map (with `info.home_page` as a last-resort fallback) so any PyPI package that points its `Source` / `Repository` / `Source Code` URL at a GitHub repo gets a `scorecard_score` signal.

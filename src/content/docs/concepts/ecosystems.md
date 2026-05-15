@@ -18,14 +18,15 @@ where.
 | `pnpm-lock.yaml` | pnpm | 0.1.0 | Lockfile v6 + v9. |
 | `yarn.lock` | yarn | 0.1.0 | Berry v1; classic v0 read-only. |
 | `uv.lock` | pypi | 0.2.0 | TOML schema v1, the canonical [uv](https://docs.astral.sh/uv/) lockfile. |
+| `poetry.lock` | pypi | 0.2.3 | TOML, lock-version 1.x and 2.x. Direct deps read from sibling `pyproject.toml` (`[tool.poetry.dependencies]`, group dependencies, and PEP 621 `[project.dependencies]`). |
 | `requirements.txt` | pypi | 0.2.0 | **Only when generated with hashes** (`uv pip compile --generate-hashes` or `pip-compile --generate-hashes`). Hash-less files are rejected — a wishlist is not a lockfile. |
 
 When more than one lockfile is present in the project root, the
 priority order is `pnpm-lock.yaml` → `yarn.lock` →
-`package-lock.json` → `uv.lock` → `requirements.txt`. npm-family
-lockfiles win in polyglot repos so a JS project that happens to
-contain a `requirements.txt` for tooling keeps its existing
-behaviour.
+`package-lock.json` → `uv.lock` → `poetry.lock` →
+`requirements.txt`. npm-family lockfiles win in polyglot repos so
+a JS project that happens to contain a `requirements.txt` for
+tooling keeps its existing behaviour.
 
 ## Signal coverage
 
@@ -72,8 +73,9 @@ exists in both ecosystems.
 
 ## What lives at `pypi:` today
 
-* The PyPI adapter resolves `uv.lock` and hashed `requirements.txt`
-  into the same `ResolvedDependency` shape as npm-family deps.
+* The PyPI adapter resolves `uv.lock`, `poetry.lock`, and hashed
+  `requirements.txt` into the same `ResolvedDependency` shape as
+  npm-family deps.
 * Names are normalised per [PEP 503](https://peps.python.org/pep-0503/#normalized-names)
   (`Re_quests` → `requests`) before matchers and cache keys see
   them.
@@ -92,7 +94,6 @@ Tracked in
   [PEP 740](https://peps.python.org/pep-0740/) attestation
   metadata as it rolls out across the index.
 * sdist `setup.py` static analysis.
-* `poetry.lock` adapter.
 * crates.io, Go modules, RubyGems, Maven Central, NuGet, Hex.
 
 Each new adapter follows the same shape: a `LockfileAdapter`
