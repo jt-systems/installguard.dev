@@ -53,6 +53,7 @@ export default defineConfig({
             { label: "ci", slug: "usage/ci" },
             { label: "report", slug: "usage/report" },
             { label: "doctor", slug: "usage/doctor" },
+            { label: "explain", slug: "usage/explain" },
             { label: "Policy YAML", slug: "usage/policy-yaml" },
             { label: "Editor setup", slug: "usage/editor-setup" },
             { label: "Troubleshooting", slug: "usage/troubleshooting" },
