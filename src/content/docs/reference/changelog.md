@@ -5,6 +5,14 @@ description: What shipped in each InstallGuard release.
 
 The canonical changelog lives in the repo at [`CHANGELOG.md`](https://github.com/jt-systems/installguard/blob/main/CHANGELOG.md). This page mirrors the user-facing highlights.
 
+## 0.1.16 — 2026-05-15
+
+Type-system placeholders for the upcoming PyPI adapter ([ROADMAP M8](https://github.com/jt-systems/installguard/blob/main/ROADMAP.md)). The core crate now ships an `Ecosystem::Pypi` variant and a `Source::Pypi { url }` variant; neither is emitted by any adapter today. They exist so downstream `match` arms over `Ecosystem` and `Source` are forced to handle PyPI *before* the adapter starts producing them — trading a small amount of "hot lava" today for a much smoother adapter rollout when M8 lands.
+
+`Source::Pypi` is treated as non-exotic alongside `Source::Registry` and `Source::Workspace` (PyPI is a first-party registry source). A PyPI-ecosystem `ResolvedDependency` produces the cache key `pypi/<name>@<version>`, matching the [ecosystem-prefix grammar](/usage/policy-yaml/#ecosystem-prefix-grammar) shipped in 0.1.15.
+
+No user-facing CLI behaviour changes.
+
 ## 0.1.15 — 2026-05-15
 
 Policy allowlists now accept an optional [ecosystem-prefix grammar](/usage/policy-yaml/#ecosystem-prefix-grammar). Bare entries (`gaxios`, `my-pkg`) keep working unchanged and match a package of that name in any registry family — every existing 0.1.x policy is unaffected. New prefixed entries scope the allow to one family: `npm:lodash` matches only npm-family packages (npm/pnpm/yarn), and `pypi:requests` parses today as forward-compat for the upcoming PyPI adapter ([ROADMAP M8](https://github.com/jt-systems/installguard/blob/main/ROADMAP.md)). The grammar applies to `defaults.nameSquatAllow` and `scripts.allow`; scoped npm names (`@scope/name`, `npm:@scope/name`) work in both forms.
