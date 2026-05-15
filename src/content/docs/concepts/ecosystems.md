@@ -47,7 +47,7 @@ what differs is which providers can produce which signals.
 | `maintainer_new_account` | ✅ npm registry | ⏳ deferred (same reason) |
 | `name_squat` | ✅ local heuristic | ✅ local heuristic |
 | `provenance_claimed` | ✅ npm registry | n/a (no equivalent today) |
-| `scorecard_score` | ✅ Scorecard | ⏳ deferred (needs `info.project_urls` plumbing) |
+| `scorecard_score` | ✅ Scorecard | ✅ Scorecard (via `info.project_urls` → GitHub) |
 
 A `⏳ deferred` cell means the signal is silent for that
 ecosystem — its absence does **not** count against the package.
@@ -91,8 +91,8 @@ Tracked in
 * Maintainer / publisher signals for PyPI — likely via
   [PEP 740](https://peps.python.org/pep-0740/) attestation
   metadata as it rolls out across the index.
-* OpenSSF Scorecard wiring for PyPI deps.
 * sdist `setup.py` static analysis.
+* `poetry.lock` adapter.
 * crates.io, Go modules, RubyGems, Maven Central, NuGet, Hex.
 
 Each new adapter follows the same shape: a `LockfileAdapter`

@@ -5,6 +5,16 @@ description: What shipped in each InstallGuard release.
 
 The canonical changelog lives in the repo at [`CHANGELOG.md`](https://github.com/jt-systems/installguard/blob/main/CHANGELOG.md). This page mirrors the user-facing highlights.
 
+## 0.2.2 — 2026-05-15
+
+**OpenSSF Scorecard now scores PyPI dependencies.** The Scorecard provider previously skipped Python deps because it discovered the upstream source-repo URL via the npm packument. This release teaches it to read PyPI's `info.project_urls` map (with `info.home_page` as a last-resort fallback) so any PyPI package that points its `Source` / `Repository` / `Source Code` URL at a GitHub repo gets a `scorecard_score` signal.
+
+The walk over `project_urls` is case- and separator-insensitive (`Source-Code`, `source code`, `Repository` all match), and falls through to any value containing `github.com` before `home_page` — catching the common case where a project lists its repo only under a custom key like `Tracker` or `Bug Reports`.
+
+GitHub-hosting requirement unchanged: non-github source URLs resolve to no signal (Scorecard's gitlab.com / bitbucket.org coverage is too sparse to be useful today).
+
+Smoke-tested live: `requests@2.31.0` now surfaces `scorecard_score: 8` against `github.com/psf/requests`, lifting its trust score from 60 to 66.
+
 ## 0.2.1 — 2026-05-15
 
 **PyPI dependencies are now scored and gated.** The 0.2.0 adapter made PyPI deps visible; this release wires three signal providers to them so they actually participate in policy decisions.

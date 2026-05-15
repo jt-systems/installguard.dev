@@ -178,8 +178,24 @@
   background-attachment: fixed;
 }
 
-/* Translucent header so the wash bleeds through. */
+/* Translucent header so the wash bleeds through.
+ * backdrop-filter lives on a ::before pseudo-element rather than the
+ * header element itself.  Applying backdrop-filter directly to the
+ * header creates a compositing layer at the same z-index as the
+ * hamburger button (a fixed sibling, not a child), and mobile Chromium
+ * / WebKit can route touch events to the compositing layer instead of
+ * the button that paints on top.  Keeping backdrop-filter on a
+ * pointer-events:none pseudo-element avoids that race entirely.
+ */
 :root[data-theme="dark"] header.header {
+  background: transparent;
+  border-bottom-color: rgba(148, 163, 184, 0.08);
+}
+
+:root[data-theme="dark"] header.header::before {
+  content: "";
+  position: absolute;
+  inset: 0;
   background: linear-gradient(
     180deg,
     rgba(2, 6, 23, 0.92) 0%,
@@ -187,10 +203,18 @@
   );
   backdrop-filter: saturate(140%) blur(10px);
   -webkit-backdrop-filter: saturate(140%) blur(10px);
-  border-bottom-color: rgba(148, 163, 184, 0.08);
+  pointer-events: none;
 }
 
 :root[data-theme="light"] header.header {
+  background: transparent;
+  border-bottom-color: rgba(15, 23, 42, 0.08);
+}
+
+:root[data-theme="light"] header.header::before {
+  content: "";
+  position: absolute;
+  inset: 0;
   background: linear-gradient(
     180deg,
     rgba(255, 255, 255, 0.92) 0%,
@@ -198,7 +222,7 @@
   );
   backdrop-filter: saturate(140%) blur(10px);
   -webkit-backdrop-filter: saturate(140%) blur(10px);
-  border-bottom-color: rgba(15, 23, 42, 0.08);
+  pointer-events: none;
 }
 
 /* ---------- Splash hero suppression ----------
@@ -703,17 +727,24 @@
 }
 
 /* ---------- Mobile menu hit target ----------
- * Starlight's mobile menu button is `border-radius: 50%` over a 32×32
- * box. Chromium hit-tests rounded shapes against the visible disk, not
- * the bounding box, so the four corner triangles fall through to the
- * fixed header behind the button — taps near the edge of the visible
- * disk silently miss. Reducing the radius to a squircle keeps the
- * rest of the visual language (cards/buttons all use 0.5rem) and
- * recovers the full bounding box as a hit target without enlarging
- * the chrome. Open-state X picks up the same shape automatically.
+ * Two issues fixed here:
+ *
+ * 1. border-radius: 50%  → Chromium hit-tests circular shapes against
+ *    the inscribed disk, so the four corner triangles fell through to
+ *    the fixed header behind the button.  0.5rem gives a squircle
+ *    (consistent with every other button/card) and restores the full
+ *    bounding box as a hit target.
+ *
+ * 2. z-index: 11  → The header has z-index: 10 (--sl-z-index-navbar).
+ *    Giving the button z-index: 11 makes it unambiguously above the
+ *    header in the stacking order, which fixes the remaining case where
+ *    mobile Chromium / WebKit still routes touch events to the header
+ *    (the backdrop-filter fix above handles the compositing-layer side
+ *    of the same bug; this is belt-and-suspenders).
  */
 @media (max-width: 50rem) {
   starlight-menu-button button {
     border-radius: 0.5rem;
+    z-index: 11;
   }
 }
