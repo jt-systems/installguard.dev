@@ -78,6 +78,18 @@ That's an info-level warning, not an error. If you don't have an `installguard.y
 
 Check the warn count. If you've set `installguard ci --max-warn N` and the run produced more than `N` warnings, the job fails. Set `--max-warn 0` for strict warn-as-error semantics; omit it to fail only on blocks. Otherwise, see [Reference › Exit codes](/reference/exit-codes/) for the canonical mapping.
 
+## I upgraded InstallGuard and a package's signals look stale
+
+Since 0.1.17 this should be self-healing — every cache entry is stamped with the producing tool version, and any mismatch on read drops and refetches. If you're on 0.1.17+ and still suspect stale data:
+
+```bash
+installguard cache info     # per-status breakdown
+installguard cache clear    # nuclear option; next scan refetches everything
+installguard cache path     # if you really want to rm -rf yourself
+```
+
+On 0.1.16 and earlier you do need to clear the cache directory by hand after some upgrades; the `cache` subcommand was added in 0.1.17 specifically to retire that workflow.
+
 ## Where do I report a real attack?
 
 If you believe a finding is a genuine supply-chain attack and not a false positive, **report it to [npm's security team](https://github.com/advisories/new)** before doing anything else. InstallGuard is a gate; npm's takedown pipeline is what gets the package out of the registry.

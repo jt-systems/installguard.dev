@@ -5,6 +5,18 @@ description: What shipped in each InstallGuard release.
 
 The canonical changelog lives in the repo at [`CHANGELOG.md`](https://github.com/jt-systems/installguard/blob/main/CHANGELOG.md). This page mirrors the user-facing highlights.
 
+## 0.1.17 — 2026-05-15
+
+**Cache invalidation, finally automatic.** Every on-disk cache entry now stamps the producing tool's version on write; on read, a mismatch drops the entry just like a schema mismatch. Closes the historical foot-gun where signal-shape changes that shipped between explicit schema bumps left users hand-running `rm -rf ~/Library/Caches/installguard` after every upgrade. Legacy entries written by 0.1.16 and earlier auto-flush on first read under 0.1.17 — you get a clean slate on the upgrade.
+
+New [`installguard cache`](/usage/troubleshooting/#i-upgraded-installguard-and-a-packages-signals-look-stale) subcommand for inspection and manual control:
+
+* `installguard cache path` — prints the resolved cache directory.
+* `installguard cache info` — per-status breakdown (fresh / stale by version / stale by schema / unreadable) plus the running tool version.
+* `installguard cache clear` — drops every entry; the next `scan` refetches signals from the network.
+
+All three honour `--cache-dir` for parity with `scan`.
+
 ## 0.1.16 — 2026-05-15
 
 Type-system placeholders for the upcoming PyPI adapter ([ROADMAP M8](https://github.com/jt-systems/installguard/blob/main/ROADMAP.md)). The core crate now ships an `Ecosystem::Pypi` variant and a `Source::Pypi { url }` variant; neither is emitted by any adapter today. They exist so downstream `match` arms over `Ecosystem` and `Source` are forced to handle PyPI *before* the adapter starts producing them — trading a small amount of "hot lava" today for a much smoother adapter rollout when M8 lands.
