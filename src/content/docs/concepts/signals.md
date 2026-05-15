@@ -8,8 +8,8 @@ A **signal** is a single fact about a `(name, version)` pair, produced by a `Sig
 | Signal | What it means | Source |
 |---|---|---|
 | `published_at` | When this version was first published | npm registry / PyPI JSON API |
-| `lifecycle_scripts` | `preinstall` / `install` / `postinstall` / `preuninstall` / `postuninstall` declared (npm); `setup.py` present in the sdist (PyPI) | npm registry / PyPI sdist scan |
-| `suspicious_script` | Lifecycle script body matched a high-risk pattern (shell + Python rulesets) | static analysis of script / `setup.py` source |
+| `lifecycle_scripts` | `preinstall` / `install` / `postinstall` / `preuninstall` / `postuninstall` declared (npm); `setup.py` or an in-tree PEP 517 `backend-path` build backend present in the sdist (PyPI) | npm registry / PyPI sdist scan |
+| `suspicious_script` | Lifecycle script body matched a high-risk pattern (shell + Python rulesets) | static analysis of script / PyPI build source |
 | `version_surface_change` | New `bin` entries or lifecycle scripts vs. previous release | npm registry diff |
 | `dist_tag_anomaly` | `latest` points at a strictly older major than the highest published | npm registry |
 | `publisher_change` | Different `_npmUser` than the previous version | npm registry |

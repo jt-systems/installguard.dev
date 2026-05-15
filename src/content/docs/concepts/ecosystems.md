@@ -40,8 +40,8 @@ what differs is which providers can produce which signals.
 | `advisory_known` | ✅ OSV (npm) | ✅ OSV (PyPI: GHSA + PyPA) |
 | `deprecated_version` | ✅ npm registry | ✅ PyPI ([PEP 592](https://peps.python.org/pep-0592/) yanked) |
 | `project_metadata` (licences) | ✅ deps.dev | ✅ deps.dev |
-| `lifecycle_scripts` | ✅ npm registry | ◐ via `.tar.gz` sdist `setup.py` scan (opt-out `--no-pypi-sdist`) |
-| `suspicious_script` | ✅ static analysis | ◐ via `.tar.gz` sdist `setup.py` scan (opt-out `--no-pypi-sdist`) |
+| `lifecycle_scripts` | ✅ npm registry | ◐ via `.tar.gz` sdist scan (`setup.py` + in-tree PEP 517 `backend-path`) |
+| `suspicious_script` | ✅ static analysis | ◐ via `.tar.gz` sdist scan (`setup.py` + in-tree PEP 517 `backend-path`) |
 | `version_surface_change` | ✅ npm registry | ⏳ deferred |
 | `dist_tag_anomaly` | ✅ npm registry | n/a (PyPI has no dist-tags) |
 | `publisher_change` | ✅ npm registry (`_npmUser`) | ⏳ deferred (no per-version publisher in PyPI JSON) |
@@ -91,15 +91,15 @@ exists in both ecosystems.
   the trust-score boost work identically across ecosystems.
 * The sdist scanner downloads each PyPI release's canonical
   `.tar.gz` (25 MiB cap, SHA-256 verified against PyPI's
-  metadata digest) and inspects `setup.py` for install-time RCE
-  patterns. Presence of `setup.py` emits `lifecycle_scripts`;
-  matches against the shell + Python pattern set
-  (`os.system(curl …)`, `exec(b64decode(…))`, socket-based
-  reverse shells, …) emit `suspicious_script`. Disable per-run
-  with `--no-pypi-sdist`.
-* Current limit: packages that rely only on `pyproject.toml`
-  build backends / PEP 517 hooks without a `setup.py` do not yet
-  emit PyPI `lifecycle_scripts` or `suspicious_script` signals.
+  metadata digest) and inspects legacy `setup.py` plus in-tree
+  PEP 517 build backends declared via
+  `[build-system].backend-path` in `pyproject.toml`. Presence of
+  either surface emits `lifecycle_scripts`; matches against the
+  shell + Python pattern set (`os.system(curl …)`,
+  `exec(b64decode(…))`, socket-based reverse shells, …) emit
+  `suspicious_script`. Disable per-run with `--no-pypi-sdist`.
+* Current limit: external build backends referenced only through
+  `build-system.requires` remain out of scope for this provider.
   Absence of a PyPI install-time signal is therefore not a clean
   bill of health; it means "nothing observable matched the
   current provider set."

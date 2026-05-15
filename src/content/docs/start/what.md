@@ -36,7 +36,7 @@ InstallGuard sits **above** that layer:
 | **Ecosystems** | pnpm | npm, pnpm, yarn, PyPI (`uv.lock`, `poetry.lock`, pinned `requirements.txt`) under one policy |
 | **External signals** | — | OSV / GHSA, deps.dev metadata, OpenSSF Scorecard, publisher account-age, dist-tag rollback, version-surface drift, PyPI sdist inspection |
 | **Identity attacks** | — | Typosquat distance-1 + Unicode homoglyph detection |
-| **Script analysis** | Approve / deny | Pattern-based body scanning for obfuscated payloads (shell + Python `setup.py`) |
+| **Script analysis** | Approve / deny | Pattern-based body scanning for obfuscated payloads (shell + Python `setup.py` / in-tree PEP 517 backend code) |
 | **Evidence** | Installer config | `installguard.lock` audit trail, `--frozen` replay, in-toto attestation, CycloneDX SBOM, OpenVEX |
 | **Triage UX** | — | `explain`, `doctor`, `simulate`, JUnit XML, GitHub PR sticky comment, GitLab report |
 | **Org policy** | Per-repo `pnpm-workspace.yaml` | One YAML policy across mixed npm / pnpm / yarn / PyPI repos |

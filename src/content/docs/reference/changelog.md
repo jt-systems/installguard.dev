@@ -5,6 +5,28 @@ description: What shipped in each InstallGuard release.
 
 The canonical changelog lives in the repo at [`CHANGELOG.md`](https://github.com/jt-systems/installguard/blob/main/CHANGELOG.md). This page mirrors the user-facing highlights.
 
+## 0.3.3 — 2026-05-15
+
+**PyPI source builds no longer go silent on in-tree PEP 517 backends.**
+The `pypi-sdist` provider used to stop at `setup.py`: a source
+release with only `pyproject.toml` and `[build-system].backend-path`
+emitted no install-time signal even though pip imports that backend
+code to build the wheel.
+
+The provider now reads `pyproject.toml`, detects in-tree
+`backend-path` roots, emits
+`lifecycle_scripts: ["pyproject build-backend"]`, and scans every
+Python file under those roots with the same shell + Python suspicious
+pattern rules already used for `setup.py`. Suspicious findings are
+tied to the backend file path in audit output, so reviewers can see
+exactly which backend module triggered.
+
+Docs updated alongside the code: the coverage matrix, signal glossary,
+homepage copy, and CLI help now all describe the PyPI scope as
+legacy `setup.py` plus in-tree PEP 517 backends. External build
+backends referenced only through `build-system.requires` remain out of
+scope for this provider.
+
 ## 0.3.2 — 2026-05-15
 
 **Release-workflow asset-upload race fix.** The v0.3.1 release job's `softprops/action-gh-release` `files:` glob list had three redundant entries (`*.cosign.bundle`, `*.sig`, `*.pem`) that overlapped with the broader `installguard-*` glob — the cosign sidecars are themselves named `installguard-<target>.cosign.bundle` etc. The action uploaded each sidecar twice concurrently and hit GitHub's "asset already exists" race-condition path, ultimately failing the publish job hard, which skipped the SLSA provenance and Homebrew tap-bump downstream jobs. v0.3.0 was lucky and didn't trip the race.
