@@ -5,6 +5,18 @@ description: What shipped in each InstallGuard release.
 
 The canonical changelog lives in the repo at [`CHANGELOG.md`](https://github.com/jt-systems/installguard/blob/main/CHANGELOG.md). This page mirrors the user-facing highlights.
 
+## 0.2.5 — 2026-05-15
+
+**PyPI sdists are now scanned for install-time RCE patterns.** A new provider (`installguard-signal-pypi-sdist`) closes the last two cells in the PyPI coverage matrix that had a viable path: `lifecycle_scripts` and `suspicious_script`.
+
+For every resolved PyPI dependency the provider downloads the canonical `.tar.gz` sdist (subject to a 25 MiB hard cap, HEAD-probed first so a pathological size never costs bandwidth), verifies the tarball's SHA-256 against the digest PyPI publishes, extracts `setup.py` (1 MiB cap on the body, UTF-8 lossy fallback), and emits `Signal::LifecycleScripts { scripts: ["setup.py"] }` whenever the file is present — `setup.py` runs during `pip install`, full stop.
+
+The body is then run through both the existing shell-pattern detector (`curl … | sh`, `wget … | bash`, `/dev/tcp`, base64-decoded shell) and a new Python-aware ruleset covering `os.system`/`subprocess` calls that fetch over the network, `exec`/`eval` of `urlopen`/`requests.get`/`b64decode` payloads, the canonical `socket.socket(…) + os.dup2 / pty.spawn / sh -i` reverse-shell layout, and `__import__('os').system(…)` obfuscation. Each rule fires at most once per body and emits `Signal::SuspiciousScript`.
+
+The provider fails soft on every kind of network or parse error. PEP 517-only sdists (no `setup.py`, just a `pyproject.toml`) correctly produce no lifecycle signal — that is the safe shape and we want users moving toward it. A new `--no-pypi-sdist` flag matches the existing opt-out family for offline / air-gapped CI runs.
+
+Smoke-validated against `pyyaml@6.0.1`: `lifecycle_scripts: ["setup.py"]` is emitted, the default policy blocks the install, and `--no-pypi-sdist` correctly suppresses the signal.
+
 ## 0.2.4 — 2026-05-15
 
 **PEP 740 publisher attestations are now surfaced as `provenance_claimed` on PyPI deps.** The pypi-registry provider gains a second probe — after fetching `/pypi/<name>/<version>/json` for `published_at` and yanked status, it also asks PyPI's [Integrity API](https://docs.pypi.org/api/integrity/) (`GET /integrity/<name>/<version>/<filename>/provenance`) about the canonical sdist (or first wheel as fallback). A `200` response means the file was uploaded with a Trusted Publisher attestation that PyPI cryptographically verified at upload time; we surface that as `Signal::ProvenanceClaimed` with `bundle_url` set to the integrity URL itself.

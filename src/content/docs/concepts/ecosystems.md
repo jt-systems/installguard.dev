@@ -40,8 +40,8 @@ what differs is which providers can produce which signals.
 | `advisory_known` | ✅ OSV (npm) | ✅ OSV (PyPI: GHSA + PyPA) |
 | `deprecated_version` | ✅ npm registry | ✅ PyPI ([PEP 592](https://peps.python.org/pep-0592/) yanked) |
 | `project_metadata` (licences) | ✅ deps.dev | ✅ deps.dev |
-| `lifecycle_scripts` | ✅ npm registry | ⏳ deferred (sdist scan) |
-| `suspicious_script` | ✅ static analysis | ⏳ deferred (sdist scan) |
+| `lifecycle_scripts` | ✅ npm registry | ✅ via sdist scan (opt-out `--no-pypi-sdist`) |
+| `suspicious_script` | ✅ static analysis | ✅ via sdist scan (opt-out `--no-pypi-sdist`) |
 | `version_surface_change` | ✅ npm registry | ⏳ deferred |
 | `dist_tag_anomaly` | ✅ npm registry | n/a (PyPI has no dist-tags) |
 | `publisher_change` | ✅ npm registry (`_npmUser`) | ⏳ deferred (no per-version publisher in PyPI JSON) |
@@ -89,14 +89,20 @@ exists in both ecosystems.
   Publisher attestations; presence emits `provenance_claimed`
   (the same shape npm uses), so `policy.requireProvenance` and
   the trust-score boost work identically across ecosystems.
+* The sdist scanner downloads each PyPI release's canonical
+  `.tar.gz` (25 MiB cap, SHA-256 verified against PyPI's
+  metadata digest) and inspects `setup.py` for install-time RCE
+  patterns. Presence of `setup.py` emits `lifecycle_scripts`;
+  matches against the shell + Python pattern set
+  (`os.system(curl …)`, `exec(b64decode(…))`, socket-based
+  reverse shells, …) emit `suspicious_script`. Disable per-run
+  with `--no-pypi-sdist`.
 
 ## What's coming next
 
 Tracked in
 [ROADMAP M8](https://github.com/jt-systems/installguard/blob/main/ROADMAP.md#milestone-8--beyond-npm):
 
-* sdist `setup.py` static analysis (would close `lifecycle_scripts`
-  and `suspicious_script` for PyPI).
 * crates.io, Go modules, RubyGems, Maven Central, NuGet, Hex.
 
 Each new adapter follows the same shape: a `LockfileAdapter`
