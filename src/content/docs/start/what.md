@@ -41,7 +41,7 @@ InstallGuard sits **above** that layer:
 | **Triage UX** | — | `explain`, `doctor`, `simulate`, JUnit XML, GitHub PR sticky comment, GitLab report |
 | **Org policy** | Per-repo `pnpm-workspace.yaml` | One YAML policy across mixed npm / pnpm / yarn / PyPI repos |
 
-> **pnpm is the installer with strong built-in guardrails; InstallGuard is the policy-and-evidence layer that sits across pnpm, npm, yarn, and PyPI.**
+In one line: pnpm is the installer with strong built-in guardrails. InstallGuard is the policy-and-evidence layer that sits across pnpm, npm, yarn, and PyPI.
 
 All-pnpm JS shop? You probably don't need InstallGuard. Mixed estate, OSV / Scorecard / publisher-change gating, or auditable per-CI-run evidence? That's our lane.
 
