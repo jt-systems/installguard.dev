@@ -75,13 +75,13 @@ The pnpm and npm adapters were already at parity — pnpm records the workspace 
 
 ## 0.2.5 — 2026-05-15
 
-**PyPI sdists are now scanned for install-time RCE patterns.** A new provider (`installguard-signal-pypi-sdist`) closes the last two cells in the PyPI coverage matrix that had a viable path: `lifecycle_scripts` and `suspicious_script`.
+**PyPI sdists are now scanned for install-time RCE patterns.** A new provider (`installguard-signal-pypi-sdist`) covers the legacy `setup.py` path for the two remaining PyPI install-time signals we can observe directly today: `lifecycle_scripts` and `suspicious_script`.
 
 For every resolved PyPI dependency the provider downloads the canonical `.tar.gz` sdist (subject to a 25 MiB hard cap, HEAD-probed first so a pathological size never costs bandwidth), verifies the tarball's SHA-256 against the digest PyPI publishes, extracts `setup.py` (1 MiB cap on the body, UTF-8 lossy fallback), and emits `Signal::LifecycleScripts { scripts: ["setup.py"] }` whenever the file is present — `setup.py` runs during `pip install`, full stop.
 
 The body is then run through both the existing shell-pattern detector (`curl … | sh`, `wget … | bash`, `/dev/tcp`, base64-decoded shell) and a new Python-aware ruleset covering `os.system`/`subprocess` calls that fetch over the network, `exec`/`eval` of `urlopen`/`requests.get`/`b64decode` payloads, the canonical `socket.socket(…) + os.dup2 / pty.spawn / sh -i` reverse-shell layout, and `__import__('os').system(…)` obfuscation. Each rule fires at most once per body and emits `Signal::SuspiciousScript`.
 
-The provider fails soft on every kind of network or parse error. PEP 517-only sdists (no `setup.py`, just a `pyproject.toml`) correctly produce no lifecycle signal — that is the safe shape and we want users moving toward it. A new `--no-pypi-sdist` flag matches the existing opt-out family for offline / air-gapped CI runs.
+Transport, digest-mismatch, oversize, and parse failures surface as provider unavailability rather than a false "clean" result. PEP 517-only projects without a `setup.py` currently produce no signal from this provider; that's a coverage limit, not a clean bill of health. A new `--no-pypi-sdist` flag matches the existing opt-out family for offline / air-gapped CI runs.
 
 Smoke-validated against `pyyaml@6.0.1`: `lifecycle_scripts: ["setup.py"]` is emitted, the default policy blocks the install, and `--no-pypi-sdist` correctly suppresses the signal.
 
