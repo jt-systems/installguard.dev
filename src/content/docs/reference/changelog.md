@@ -5,6 +5,14 @@ description: What shipped in each InstallGuard release.
 
 The canonical changelog lives in the repo at [`CHANGELOG.md`](https://github.com/jt-systems/installguard/blob/main/CHANGELOG.md). This page mirrors the user-facing highlights.
 
+## 0.1.18 — 2026-05-15
+
+**Recipe: gating Dependabot & Renovate PRs.** New [Dependency bots](/recipes/dependency-bots/) recipe shows how to scope an InstallGuard workflow to bot-authored bump PRs, and how to gate Dependabot automerge on a clean InstallGuard verdict so patch & minor bumps land hands-free while real findings still block. Includes a Renovate config snippet that defers automerge to required-status-check enforcement, plus the security rationale for keeping the gate in a target-branch workflow file (so bots can't edit it).
+
+Also ships [`examples/workflows/installguard-bot-prs.yml`](https://github.com/jt-systems/installguard/blob/main/examples/workflows/installguard-bot-prs.yml) for drop-in use.
+
+No binary changes — same gate, more places to plug it in.
+
 ## 0.1.17 — 2026-05-15
 
 **Cache invalidation, finally automatic.** Every on-disk cache entry now stamps the producing tool's version on write; on read, a mismatch drops the entry just like a schema mismatch. Closes the historical foot-gun where signal-shape changes that shipped between explicit schema bumps left users hand-running `rm -rf ~/Library/Caches/installguard` after every upgrade. Legacy entries written by 0.1.16 and earlier auto-flush on first read under 0.1.17 — you get a clean slate on the upgrade.
