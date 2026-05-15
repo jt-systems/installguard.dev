@@ -76,3 +76,23 @@ installguard --version
 ```
 
 Expected output is the version number. If you get "command not found", make sure `$(brew --prefix)/bin` (or wherever your binary lives) is on `$PATH`.
+
+## Update
+
+InstallGuard is alpha (`0.x`) and ships fixes regularly — keep up with the latest tag.
+
+**Homebrew:**
+
+```sh
+brew update && brew upgrade installguard
+```
+
+**Cargo (from source):** re-run the same install command; `cargo install` overwrites the existing binary in place.
+
+```sh
+cargo install --git https://github.com/jt-systems/installguard installguard --locked --force
+```
+
+**Pre-built binary:** download the new release from [GitHub Releases](https://github.com/jt-systems/installguard/releases/latest), [verify it](#verify-a-downloaded-binary), and replace the binary on your `$PATH`.
+
+After upgrading, re-run `installguard --version` to confirm. If you commit `installguard.lock` to your repo, the next run on a newer binary may rebuild the lock when the schema version bumps — that's expected, review the diff and commit it.
