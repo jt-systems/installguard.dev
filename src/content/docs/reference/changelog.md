@@ -43,7 +43,7 @@ Three small correctness fixes — none change a verdict on existing fixtures, bu
 
 * **Scorecard repo discovery no longer fails open.** Transport, 5xx, and decode failures on the npm packument / PyPI metadata fetch (used to discover the upstream repo URL) used to collapse to "no signal". They now surface as `Signal::Unavailable`. "No `repository` field recorded" is still silent (legitimate absence). Matters most if you've disabled the dedicated `npm-registry` / `pypi-registry` providers and rely on Scorecard alone.
 
-* **`requireProvenance` honesty pass extended to user-facing docs.** The 0.2.6 cleanup fixed the code-level overclaims; this round fixes the [`requireProvenance`](/usage/policy-yaml/) row on the Policy YAML reference and the trust-score factor list in the [whitepaper](/whitepaper/) so neither implies the cryptographic DSSE / Rekor verification we don't yet perform. M9 still tracks the verified upgrade.
+* **`requireProvenance` honesty pass extended to user-facing docs.** The 0.2.6 cleanup fixed the code-level overclaims; this round fixes the [`requireProvenance`](/usage/policy-yaml/) row on the Policy YAML reference and the trust-score factor list in the [background paper](https://github.com/jt-systems/installguard/blob/main/whitepaper.md) so neither implies the cryptographic DSSE / Rekor verification we don't yet perform. M9 still tracks the verified upgrade.
 
 ## 0.3.0 — 2026-05-15
 
