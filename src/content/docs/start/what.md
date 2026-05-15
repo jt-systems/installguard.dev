@@ -35,4 +35,4 @@ The patterns that ship malware before the public advisory feeds notice:
 
 ## Trust model
 
-Single static binary, deterministic output. No daemon, no account, no telemetry. Reads your lockfile plus your choice of registry metadata (npm, PyPI), advisory feed (OSV), project metadata (deps.dev), and OpenSSF Scorecard — every provider has a `--no-…` opt-out, and `--frozen` runs entirely from `installguard.lock` with zero network. Releases ship SHA-256 checksums; Cosign-signed binaries are on the v0.3 roadmap.
+Single static binary, deterministic output. No daemon, no account, no telemetry. Reads your lockfile plus your choice of registry metadata (npm, PyPI), advisory feed (OSV), project metadata (deps.dev), and OpenSSF Scorecard — every provider has a `--no-…` opt-out, and `--frozen` runs entirely from `installguard.lock` with zero network. Releases are signed via [Sigstore cosign keyless](https://docs.sigstore.dev/cosign/signing/overview/) and ship SLSA v1.0 build provenance — see [Verify a downloaded binary](/start/install/#verify-a-downloaded-binary) for the verification command.
