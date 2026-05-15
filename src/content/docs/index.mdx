@@ -45,7 +45,8 @@ import ScanDemo from "../../components/ScanDemo.astro";
       <h3 class="ig-card-title">Publisher &amp; account changes</h3>
       <p class="ig-card-body">
         Maintainer churn, brand-new npm accounts, and missing or mismatched
-        npm provenance attestations.
+        provenance attestations &mdash; npm <span class="ig-chip">--provenance</span>
+        bundles and PyPI <span class="ig-chip">PEP 740</span> Trusted Publisher attestations.
       </p>
     </article>
     <article class="ig-card">
@@ -54,8 +55,9 @@ import ScanDemo from "../../components/ScanDemo.astro";
       <p class="ig-card-body">
         Deny-by-default policy on <span class="ig-chip">preinstall</span>,
         <span class="ig-chip">install</span>, <span class="ig-chip">postinstall</span>
-        with a curated allowlist for native-binary packages, plus pattern-based
-        detection of obfuscated payloads.
+        and PyPI <span class="ig-chip">setup.py</span>, with a curated allowlist for
+        native-binary packages, plus pattern-based detection of obfuscated payloads
+        across both shell and Python.
       </p>
     </article>
     <article class="ig-card">

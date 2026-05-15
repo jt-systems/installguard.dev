@@ -26,7 +26,7 @@ Point your editor at it for auto-completion and inline validation — see [Edito
 | `flagDeprecated` | bool | `true` | Block deprecated versions. |
 | `detectVersionSurfaceChange` | bool | `false` | Flag new `bin`/script entries vs. prior release. |
 | `minMaintainerAccountAgeDays` | int | `0` | Block versions published by accounts younger than this. |
-| `requireProvenance` | bool | `false` | Block packages without npm provenance. |
+| `requireProvenance` | bool | `false` | Block packages without a provenance attestation. Recognises npm `--provenance` bundles and PyPI [PEP 740](https://peps.python.org/pep-0740/) Trusted Publisher attestations. |
 | `minTrustScore` | 0–100 | `0` | Block packages with composite trust below threshold. |
 | `maxAdvisorySeverity` | low\|medium\|high\|critical | `critical` | Block on advisories at or above this severity. |
 | `requireLicense` | bool | `false` | Block when no SPDX expression is recorded. |
@@ -61,7 +61,7 @@ Since 0.1.15, entries in `defaults.nameSquatAllow` and `scripts.allow` accept an
 | --- | --- |
 | `lodash` (bare) | A package named `lodash` in **any** registry family. This is the v1 default and the right shape for single-ecosystem projects. |
 | `npm:lodash` | Only npm-family packages (npm / pnpm / yarn). |
-| `pypi:requests` | Only PyPI packages. Parses today; takes effect when the PyPI adapter ships ([ROADMAP M8](https://github.com/jt-systems/installguard/blob/main/ROADMAP.md)). |
+| `pypi:requests` | Only PyPI packages. The PyPI adapter (uv.lock, poetry.lock, hashed requirements.txt) and signal providers ship today &mdash; see [Ecosystems](/concepts/ecosystems/). |
 | `@scope/pkg`, `npm:@scope/pkg` | Scoped npm names work in either form. |
 
 Unknown family prefixes (`pypy:lodash`, `gem:rails`) are a hard parse error — better a loud failure at policy load than a silent allow-of-nothing.
