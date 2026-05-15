@@ -33,7 +33,7 @@ Point your editor at it for auto-completion and inline validation — see [Edito
 | `licenseAllowlist` | string[] | `[]` | When non-empty, only these SPDX expressions are allowed. |
 | `blockArchived` | bool | `false` | Block packages whose upstream repo is archived. |
 | `minScorecardScore` | 0–10 | `0` | Block packages with OpenSSF Scorecard below threshold. |
-| `nameSquatAllow` | string[] | `[]` | Exact-match allowlist for the name-squat detector. Names listed here will not produce a `name-squat` reason even when they are Levenshtein-1 from a popular package. Added in 0.1.10. |
+| `nameSquatAllow` | string[] | `[]` | Exact-match allowlist for the name-squat detector. Names listed here will not produce a `name-squat` reason even when they are Levenshtein-1 from a popular package. Accepts the [ecosystem-prefix grammar](#ecosystem-prefix-grammar) (e.g. `npm:gaxios`) since 0.1.15. Added in 0.1.10. |
 
 ## `scripts`
 
@@ -52,6 +52,21 @@ scripts:
     - unrs-resolver         # install builds the napi-rs native addon
     - my-private-tool       # internal — postinstall syncs an asset bundle
 ```
+
+## Ecosystem-prefix grammar
+
+Since 0.1.15, entries in `defaults.nameSquatAllow` and `scripts.allow` accept an optional `family:` prefix that scopes the allow to one registry family.
+
+| Form | Matches |
+| --- | --- |
+| `lodash` (bare) | A package named `lodash` in **any** registry family. This is the v1 default and the right shape for single-ecosystem projects. |
+| `npm:lodash` | Only npm-family packages (npm / pnpm / yarn). |
+| `pypi:requests` | Only PyPI packages. Parses today; takes effect when the PyPI adapter ships ([ROADMAP M8](https://github.com/jt-systems/installguard/blob/main/ROADMAP.md)). |
+| `@scope/pkg`, `npm:@scope/pkg` | Scoped npm names work in either form. |
+
+Unknown family prefixes (`pypy:lodash`, `gem:rails`) are a hard parse error — better a loud failure at policy load than a silent allow-of-nothing.
+
+Most users keep using bare names. Reach for the prefix when you operate a multi-ecosystem repo and the same package name exists in more than one family but should only be allow-listed in one.
 
 ## `severity`
 

@@ -5,6 +5,14 @@ description: What shipped in each InstallGuard release.
 
 The canonical changelog lives in the repo at [`CHANGELOG.md`](https://github.com/jt-systems/installguard/blob/main/CHANGELOG.md). This page mirrors the user-facing highlights.
 
+## 0.1.15 — 2026-05-15
+
+Policy allowlists now accept an optional [ecosystem-prefix grammar](/usage/policy-yaml/#ecosystem-prefix-grammar). Bare entries (`gaxios`, `my-pkg`) keep working unchanged and match a package of that name in any registry family — every existing 0.1.x policy is unaffected. New prefixed entries scope the allow to one family: `npm:lodash` matches only npm-family packages (npm/pnpm/yarn), and `pypi:requests` parses today as forward-compat for the upcoming PyPI adapter ([ROADMAP M8](https://github.com/jt-systems/installguard/blob/main/ROADMAP.md)). The grammar applies to `defaults.nameSquatAllow` and `scripts.allow`; scoped npm names (`@scope/name`, `npm:@scope/name`) work in both forms.
+
+Unknown family prefixes (`pypy:lodash`, `gem:rails`) fail policy load loudly rather than silently allowing nothing.
+
+Internally, the dependency cache key now derives from the package's *registry family* rather than a hardcoded `"npm"` literal — paving the way for `pypi/<name>@<version>` keys without further core changes when the PyPI adapter lands.
+
 ## 0.1.14 — 2026-05-15
 
 New [`installguard simulate`](/usage/simulate/) subcommand. Runs the same evaluation pipeline as [`scan`](/usage/scan/) once against the project's *current* policy, then re-evaluates every dependency against a *candidate* policy YAML using the **same signals** (no second network round-trip), and prints the per-package decision diff: which packages would be newly blocked, newly warned, newly allowed, or have their reasons change while staying in the same decision class. Pretty output groups by class with a `+`/`-` reason-code delta per package; `--format json` emits a stable machine-readable shape (`schemaVersion: 1`) with per-change before/after `details` and `reasonCodes`. Always exits `0` — simulate is advisory; gating belongs in `scan` or `ci`. Completes the [`explain`](/usage/explain/) (why was this blocked?) / [`doctor`](/usage/doctor/) (what should I add?) / `simulate` (what would happen if I added this?) triad — the propose → preview → merge loop for policy changes without spinning up a scratch repo or a network re-fetch.
