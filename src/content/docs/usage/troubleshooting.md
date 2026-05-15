@@ -7,7 +7,7 @@ description: Common findings and what to do about them.
 
 InstallGuard looks for `pnpm-lock.yaml`, `yarn.lock`, `package-lock.json`, `uv.lock`, `poetry.lock`, or pinned `requirements.txt` at the path you point it at (default: current directory).
 
-As of **v0.3.3**, if no lockfile lives at the root, InstallGuard scans immediate child directories and uses the unique match (with a `note: using <path>` line). Common patterns this handles:
+As of **v0.3.4**, if no lockfile lives at the root, InstallGuard scans immediate child directories and uses the unique match (with a `note: using <path>` line). Common patterns this handles:
 
 - Python repos where the actual package source (and `poetry.lock` / `uv.lock`) lives in a named subdir like `cpi_myca/` or `backend/` while the git root holds CI config and READMEs.
 - A `frontend/` + `backend/` split with only one of them locked.

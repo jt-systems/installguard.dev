@@ -5,6 +5,29 @@ description: What shipped in each InstallGuard release.
 
 The canonical changelog lives in the repo at [`CHANGELOG.md`](https://github.com/jt-systems/installguard/blob/main/CHANGELOG.md). This page mirrors the user-facing highlights.
 
+## 0.3.4 — 2026-05-15
+
+**One-level lockfile auto-discovery.** `installguard scan` (and every
+other eval subcommand) used to error out as soon as no recognised
+lockfile existed at `--path` (default: current directory). Many
+Python projects keep `poetry.lock` / `uv.lock` inside a named
+package subdir (`cpi_myca/poetry.lock`, `backend/uv.lock`) while
+the git root is a thin shell of CI config and READMEs.
+
+InstallGuard now scans the immediate children when the root has no
+lockfile and uses the unique match, printing a
+`note: using <relpath> (no lockfile at <root>)` line on stderr so
+the choice is never invisible. Strictly one level deep — surprises
+about which lockfile got picked are worse than a clear error.
+`node_modules`, `.git`, `.venv`, `venv`, `target`, `dist`, `build`,
+and any dotfile directory are skipped so vendored / build-output
+lockfiles can't accidentally win.
+
+The "no lockfile" error message also now suggests `--path <dir>`
+explicitly, and when multiple subdirs each contain a candidate
+lockfile lists them so you can pick one. InstallGuard does not
+auto-merge across subprojects.
+
 ## 0.3.3 — 2026-05-15
 
 **PyPI source builds no longer go silent on in-tree PEP 517 backends.**

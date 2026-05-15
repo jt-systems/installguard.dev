@@ -52,7 +52,7 @@ cosign verify-blob \
 A successful verification prints `Verified OK` and exits 0. Both flags are mandatory — without them an attacker who can mint *any* Fulcio cert could forge a signature.
 
 For stricter pinning to a specific release, swap `v.*` for the exact tag
-(for example `v0.3.3`) in the identity regex.
+(for example `v0.3.4`) in the identity regex.
 
 The same command verifies `checksums.txt` against `checksums.txt.cosign.bundle` if you'd rather verify one signature and trust the SHA-256 chain to the binaries.
 
@@ -75,7 +75,7 @@ slsa-verifier verify-artifact \
   installguard-<target>
 ```
 
-Replace `<tag>` with the release you downloaded (for example `v0.3.3`)
+Replace `<tag>` with the release you downloaded (for example `v0.3.4`)
 and `<target>` with the binary filename you verified above (for example
 `aarch64-apple-darwin`).
 

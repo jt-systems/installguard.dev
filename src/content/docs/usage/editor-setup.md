@@ -130,10 +130,10 @@ for the tag:
 https://raw.githubusercontent.com/jt-systems/installguard/<tag>/schemas/installguard-policy.schema.json
 ```
 
-For example, if your CI is pinned to `v0.3.3`, use:
+For example, if your CI is pinned to `v0.3.4`, use:
 
 ```text
-https://raw.githubusercontent.com/jt-systems/installguard/v0.3.3/schemas/installguard-policy.schema.json
+https://raw.githubusercontent.com/jt-systems/installguard/v0.3.4/schemas/installguard-policy.schema.json
 ```
 
 This is rarely needed — the schema is additive between minor releases —
