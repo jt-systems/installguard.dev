@@ -13,15 +13,18 @@
 
 <section class="ig-hero ig-section">
   <div>
-    <span class="ig-eyebrow">Supply-chain policy gate</span>
+    <span class="ig-eyebrow">Cross-ecosystem supply-chain policy</span>
     <h1 class="ig-hero-title">
-      Block compromised <span class="accent">npm installs</span> before they execute.
+      One policy across <span class="accent">npm, pnpm, yarn, and PyPI</span>.
     </h1>
     <p class="ig-hero-tagline">
-      Typosquats, hijacked publishers, malicious lifecycle scripts, and
-      unpatched advisories &mdash; surfaced as auditable signals, not
-      heuristic scores. Block on evidence of compromise; warn on uncertainty.
-      Gated on your laptop, in CI, and at the pre-commit hook.
+      pnpm 11 ships strong install-time defaults. InstallGuard is the
+      layer above: a single policy gate across npm, pnpm, yarn, and
+      PyPI, enriched with OSV advisories, deps.dev metadata, OpenSSF
+      Scorecard, publisher-change detection, typosquat / homoglyph
+      checks, and install-script body scanning &mdash; with auditable
+      <span class="ig-chip">installguard.lock</span> evidence,
+      CycloneDX SBOM, and PR sticky comments to back every block.
     </p>
     <div class="ig-hero-actions">
       <a href="/start/install/" class="ig-btn ig-btn-primary">

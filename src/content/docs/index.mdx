@@ -1,9 +1,9 @@
 ---
 title: InstallGuard
-description: Supply-chain policy gate for npm, pnpm, yarn, and PyPI. Blocks compromised dependencies before they execute on developer machines or CI.
+description: Cross-ecosystem supply-chain policy gate for npm, pnpm, yarn, and PyPI. One policy, OSV + deps.dev + Scorecard signals, auditable evidence — the layer above pnpm's built-in install-time defaults.
 template: splash
 hero:
-  tagline: Supply-chain policy gate for npm install. Blocks typosquats, hijacked publishers, malicious lifecycle scripts, and unpatched advisories before they ever execute.
+  tagline: One supply-chain policy across npm, pnpm, yarn, and PyPI — enriched with OSV, deps.dev, Scorecard, publisher-change and typosquat detection, with auditable installguard.lock evidence behind every block.
   image:
     file: ../../assets/hero-shield.svg
 ---
@@ -94,8 +94,9 @@ import ScanDemo from "../../components/ScanDemo.astro";
   <h2 class="ig-section-title">A gate, not a scanner.</h2>
   <p class="ig-section-lede">
     Static Rust binary. Reads lockfiles directly. Never resolves, never installs,
-    never executes. Designed to slot in front of <code class="ig-chip">npm install</code>
-    without slowing it down.
+    never executes. Slots in front of <code class="ig-chip">npm install</code>,
+    <code class="ig-chip">pnpm install</code>, <code class="ig-chip">yarn install</code>,
+    and <code class="ig-chip">uv sync</code> &mdash; one policy across all four.
   </p>
   <div class="ig-grid ig-grid--3">
     <article class="ig-card">
