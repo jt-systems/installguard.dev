@@ -1,18 +1,10 @@
 # Security headers for installguard.dev (Cloudflare Pages).
-# Strict by default — this is a security tool's marketing site;
-# anything less is bad signalling.
-#
-# Content-Security-Policy is intentionally absent here.
-# Astro's security.csp feature computes SHA-256 hashes for every
-# inline script tag at build time and emits them via a
-# <meta http-equiv="content-security-policy"> tag in each page.
-# A static CSP header in _headers cannot know those per-build
-# hashes and would override / conflict with the meta tag, blocking
-# Starlight's custom-element bootstrap scripts (hamburger menu,
-# theme select, etc.). The other security headers below
-# (X-Frame-Options, HSTS, etc.) cover all the protection that
-# frame-ancestors / transport-security would add.
+# We deliver CSP as an HTTP header, not a <meta http-equiv>, so
+# directives like `frame-ancestors` are actually enforced and the
+# runtime can permit the inline bootstrap, Pagefind WASM, and PostHog
+# asset scripts the site intentionally uses.
 /*
+  Content-Security-Policy: default-src 'self'; base-uri 'self'; form-action 'self'; frame-ancestors 'none'; object-src 'none'; script-src 'self' 'unsafe-inline' 'wasm-unsafe-eval' https://us-assets.i.posthog.com; worker-src 'self' blob:; connect-src 'self' https://us.i.posthog.com https://us-assets.i.posthog.com; img-src 'self' data: https://us.i.posthog.com https://us-assets.i.posthog.com; style-src 'self' 'unsafe-inline'; font-src 'self' data:
   Strict-Transport-Security: max-age=63072000; includeSubDomains; preload
   X-Content-Type-Options: nosniff
   X-Frame-Options: DENY

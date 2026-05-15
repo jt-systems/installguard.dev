@@ -9,28 +9,6 @@ export default defineConfig({
   vite: {
     plugins: [tailwindcss()],
   },
-  security: {
-    // Astro computes SHA-256 hashes for every inline <script> at build time
-    // and emits them in a <meta http-equiv="content-security-policy"> tag.
-    // This is the only way to allow Starlight's custom-element bootstrap
-    // scripts (MobileMenuToggle, ThemeSelect, etc.) under a strict CSP without
-    // baking per-build hashes into a static _headers file.
-    csp: {
-      directives: [
-        "default-src 'self'",
-        "img-src 'self' data:",
-        "font-src 'self' data:",
-        // PostHog analytics: allow outbound API + asset calls.
-        "connect-src 'self' https://us.i.posthog.com https://us-assets.i.posthog.com",
-        "frame-ancestors 'none'",
-        "base-uri 'self'",
-        "form-action 'self'",
-      ],
-      styleDirective: {
-        resources: ["'self'", "'unsafe-inline'"],
-      },
-    },
-  },
   integrations: [
     starlight({
       title: "InstallGuard",
