@@ -80,7 +80,7 @@ Check the warn count. If you've set `installguard ci --max-warn N` and the run p
 
 ## I upgraded InstallGuard and a package's signals look stale
 
-Since 0.1.17 this should be self-healing — every cache entry is stamped with the producing tool version, and any mismatch on read drops and refetches. If you're on 0.1.17+ and still suspect stale data:
+Since 0.1.17 this should be self-healing — every cache entry is stamped with the producing tool version, and any mismatch on read drops and refetches. If you're on 0.1.17+ and still suspect stale data, the [`cache`](/usage/cache/) subcommand has the controls:
 
 ```bash
 installguard cache info     # per-status breakdown

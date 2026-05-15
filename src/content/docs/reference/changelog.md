@@ -5,6 +5,24 @@ description: What shipped in each InstallGuard release.
 
 The canonical changelog lives in the repo at [`CHANGELOG.md`](https://github.com/jt-systems/installguard/blob/main/CHANGELOG.md). This page mirrors the user-facing highlights.
 
+## 0.1.19 — 2026-05-15
+
+**Docs catch-up: every subcommand now has a usage page.** The Usage section grew from 9 to 18 pages, covering every command that ships in the binary. Previously undocumented:
+
+* [`cache`](/usage/cache/) — inspect & manage the on-disk signal cache (new in 0.1.17).
+* [`schema`](/usage/schema/) — print the policy JSON Schema for editor integration.
+* [`lock`](/usage/lock/) — deterministic policy-evaluation snapshot.
+* [`verify`](/usage/verify/) — re-evaluate and check against a lock or signed bundle (online, frozen, or signature-verifying modes).
+* [`attest`](/usage/attest/) — unsigned in-toto v1 statement wrapping the verdict.
+* [`sbom`](/usage/sbom/) — CycloneDX 1.5 SBOM with `installguard:*` decision properties per component.
+* [`vex`](/usage/vex/) — OpenVEX 0.2.0 mapping decisions to VEX statements.
+* [`key`](/usage/key/) — generate Sigstore-compatible Ed25519 keypairs.
+* [`sign`](/usage/sign/) — DSSE v1 envelope cosign can verify.
+
+The attestation chain (`lock` → `attest` → `sign` → `verify --bundle`) is cross-linked end-to-end so the SLSA L3 / cosign story is finally walkable from the docs alone.
+
+No binary changes.
+
 ## 0.1.18 — 2026-05-15
 
 **Recipe: gating Dependabot & Renovate PRs.** New [Dependency bots](/recipes/dependency-bots/) recipe shows how to scope an InstallGuard workflow to bot-authored bump PRs, and how to gate Dependabot automerge on a clean InstallGuard verdict so patch & minor bumps land hands-free while real findings still block. Includes a Renovate config snippet that defers automerge to required-status-check enforcement, plus the security rationale for keeping the gate in a target-branch workflow file (so bots can't edit it).
