@@ -11,11 +11,11 @@ const body = joinTerminalLines([
   comment("1. Install"),
   `${fg("brew install jt-systems/installguard/installguard")}`,
   ``,
-  comment("2. Scan any supported repo"),
+  comment("2. Scan any supported lockfile"),
   `${fg("cd ~/work/your-project")}`,
   `${fg("installguard scan")}`,
   ``,
-  comment("3. Wire it into CI (exit code 1 on block)"),
+  comment("3. Fail CI when policy blocks a dependency"),
   `${fg("installguard ci --summary-file summary.json")}`,
 ]);
 ---

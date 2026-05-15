@@ -1,9 +1,9 @@
 ---
 title: InstallGuard
-description: One supply-chain policy across npm, pnpm, yarn, and PyPI. The policy-and-evidence layer above pnpm's install-time defaults, enriched with OSV, deps.dev, and Scorecard signals.
+description: Block risky dependencies before install across npm, pnpm, yarn, and PyPI. Catch typosquats, malicious install-time code, publisher churn, and too-fresh releases with explainable policy and installguard.lock evidence.
 template: splash
 hero:
-  tagline: One supply-chain policy across npm, pnpm, yarn, and PyPI — OSV, deps.dev, Scorecard, typosquat and publisher-change detection, with auditable installguard.lock evidence behind every block.
+  tagline: Block risky dependencies before install across npm, pnpm, yarn, and PyPI. InstallGuard turns real supply-chain failure modes into policy, then records the exact evidence behind every allow, warn, and block.
   image:
     file: ../../assets/hero-shield.svg
 ---
@@ -24,11 +24,12 @@ import ScanDemo from "../../components/ScanDemo.astro";
 </div>
 
 <section class="ig-section not-content" style="margin-top: clamp(4rem, 8vw, 6.5rem);">
-  <span class="ig-eyebrow">Detection surface</span>
-  <h2 class="ig-section-title">Fourteen independent signals. Each one a verifiable fact.</h2>
+  <span class="ig-eyebrow">What it catches</span>
+  <h2 class="ig-section-title">Checks mapped to real package attacks.</h2>
   <p class="ig-section-lede">
-    Every dependency is evaluated against a fixed set of signals about the
-    <span class="ig-chip">(name, version)</span> pair. No heuristic scores. No vibes.
+    InstallGuard does not guess at a fuzzy package “risk score.” It checks
+    concrete facts about each locked package and lets policy decide whether to
+    allow, warn, or block.
   </p>
   <div class="ig-grid ig-grid--2">
     <article class="ig-card">
@@ -36,34 +37,35 @@ import ScanDemo from "../../components/ScanDemo.astro";
       <h3 class="ig-card-title">Typosquats &amp; homoglyph attacks</h3>
       <p class="ig-card-body">
         Distance-1 typos and visually-confusable Unicode against a curated
-        list of high-traffic packages, with an allowlist for legitimate
-        distance-1 names.
+        list of high-traffic packages, with an allowlist for the legitimate
+        distance-1 names that would otherwise create noisy false positives.
       </p>
     </article>
     <article class="ig-card">
       <div class="ig-card-eyebrow">Provenance</div>
-      <h3 class="ig-card-title">Publisher &amp; account changes</h3>
+      <h3 class="ig-card-title">Publisher &amp; attestation changes</h3>
       <p class="ig-card-body">
-        Maintainer churn, brand-new npm accounts, and missing or mismatched
-        provenance attestations &mdash; npm <span class="ig-chip">--provenance</span>
-        bundles and PyPI <span class="ig-chip">PEP 740</span> Trusted Publisher attestations.
+        Maintainer churn, brand-new publisher accounts, and missing or
+        mismatched attestations across npm
+        <span class="ig-chip">--provenance</span> bundles and PyPI
+        <span class="ig-chip">PEP 740</span> Trusted Publisher releases.
       </p>
     </article>
     <article class="ig-card">
       <div class="ig-card-eyebrow">Execution</div>
-      <h3 class="ig-card-title">Install-time lifecycle scripts</h3>
+      <h3 class="ig-card-title">Install-time code execution</h3>
       <p class="ig-card-body">
         Deny-by-default policy on <span class="ig-chip">preinstall</span>,
         <span class="ig-chip">install</span>, <span class="ig-chip">postinstall</span>,
         PyPI <span class="ig-chip">setup.py</span>, and in-tree
         <span class="ig-chip">backend-path</span> build backends, with a curated
-        allowlist for native-binary packages plus pattern-based detection of
+        allowlist for native-binary packages and pattern-based detection of
         obfuscated payloads across both shell and Python.
       </p>
     </article>
     <article class="ig-card">
       <div class="ig-card-eyebrow">Velocity</div>
-      <h3 class="ig-card-title">Cooling-off &amp; surface-area drift</h3>
+      <h3 class="ig-card-title">Too-fresh releases &amp; sudden drift</h3>
       <p class="ig-card-body">
         Configurable minimum release age (default: 24h). Flags new
         <span class="ig-chip">bin</span> entries or scripts vs. the previous
@@ -72,7 +74,7 @@ import ScanDemo from "../../components/ScanDemo.astro";
     </article>
     <article class="ig-card">
       <div class="ig-card-eyebrow">Distribution</div>
-      <h3 class="ig-card-title">Dist-tag rollback attacks</h3>
+      <h3 class="ig-card-title">Dist-tag rollback patterns</h3>
       <p class="ig-card-body">
         Detects when <span class="ig-chip">latest</span> regresses across a
         major boundary &mdash; the structural fingerprint of a
@@ -81,36 +83,41 @@ import ScanDemo from "../../components/ScanDemo.astro";
     </article>
     <article class="ig-card">
       <div class="ig-card-eyebrow">Disclosed</div>
-      <h3 class="ig-card-title">Known advisories</h3>
+      <h3 class="ig-card-title">Known advisories &amp; repo health</h3>
       <p class="ig-card-body">
-        OSV / GHSA matching with severity gating. Surfaces deprecation notices,
-        archived upstream repos, and licence-allowlist violations.
+        OSV / GHSA matching with severity gating, plus deprecation notices,
+        archived upstream repos, and licence-allowlist violations from
+        external package-health signals.
       </p>
     </article>
   </div>
 </section>
 
 <section class="ig-section not-content" style="margin-top: clamp(4rem, 8vw, 6.5rem);">
-  <span class="ig-eyebrow">Engineered for the install path</span>
-  <h2 class="ig-section-title">A gate, not a scanner.</h2>
+  <span class="ig-eyebrow">Why it exists</span>
+  <h2 class="ig-section-title">Stops installs, not just reports.</h2>
   <p class="ig-section-lede">
-    Static Rust binary. Reads lockfiles directly. Never resolves, never installs,
-    never executes. Slots in front of <code class="ig-chip">npm install</code>,
-    <code class="ig-chip">pnpm install</code>, <code class="ig-chip">yarn install</code>,
-    and <code class="ig-chip">uv sync</code> &mdash; one policy across all four.
+    Most tooling tells you after a lockfile changed. InstallGuard reads the
+    lockfile first and exits before the package manager downloads or runs
+    install-time code. That gives mixed-package-manager teams one policy layer
+    across <code class="ig-chip">npm install</code>,
+    <code class="ig-chip">pnpm install</code>,
+    <code class="ig-chip">yarn install</code>, and
+    <code class="ig-chip">uv sync</code>.
   </p>
   <div class="ig-grid ig-grid--3">
     <article class="ig-card">
       <div class="ig-stat-num">~2s</div>
-      <h3 class="ig-card-title">Sub-CI latency</h3>
+      <h3 class="ig-card-title">Fast enough for every PR</h3>
       <p class="ig-card-body">
         Warm-cache scan of a 1,000-package lockfile in under two seconds.
-        No daemon, no JVM, no Python runtime.
+        Small enough to run on dependency bumps, branch protection checks, and
+        local preflight installs without becoming “that slow security step.”
       </p>
     </article>
     <article class="ig-card">
       <div class="ig-stat-num">0</div>
-      <h3 class="ig-card-title">Side effects</h3>
+      <h3 class="ig-card-title">Read-only by design</h3>
       <p class="ig-card-body">
         Reads <span class="ig-chip">package-lock.json</span>,
         <span class="ig-chip">pnpm-lock.yaml</span>,
@@ -118,30 +125,32 @@ import ScanDemo from "../../components/ScanDemo.astro";
         <span class="ig-chip">uv.lock</span>,
         <span class="ig-chip">poetry.lock</span>, and pinned
         <span class="ig-chip">requirements.txt</span> directly.
-        Never installs, never executes lifecycle scripts. Network
-        calls (registry metadata, OSV, deps.dev, Scorecard, PyPI
-        Integrity API) are opt-out per provider, and
+        Never installs and never executes lifecycle scripts. Network calls
+        (registry metadata, OSV, deps.dev, Scorecard, PyPI Integrity API) are
+        opt-out per provider, and
         <span class="ig-chip">--frozen</span> runs entirely from
-        <span class="ig-chip">installguard.lock</span> — zero sockets.
+        <span class="ig-chip">installguard.lock</span> &mdash; zero sockets.
       </p>
     </article>
     <article class="ig-card">
       <div class="ig-stat-num">100<span style="color:#6ee7b7;font-size:0.7em">%</span></div>
-      <h3 class="ig-card-title">Auditable verdicts</h3>
+      <h3 class="ig-card-title">Explainable verdicts</h3>
       <p class="ig-card-body">
         Every block is recorded in <span class="ig-chip">installguard.lock</span>
-        with the exact signals that produced it. Deterministic re-runs.
-        JUnit XML, JSON, GitHub PR sticky-comment.
+        with the exact signals that produced it. Deterministic reruns, JSON and
+        JUnit output, and GitHub PR summaries make it usable in real review and
+        audit workflows, not just local demos.
       </p>
     </article>
   </div>
 </section>
 
 <section class="ig-section ig-section--narrow not-content" style="margin-top: clamp(4rem, 8vw, 6.5rem); margin-bottom: clamp(4rem, 8vw, 6rem);">
-  <span class="ig-eyebrow">Get protected in 30 seconds</span>
-  <h2 class="ig-section-title">Three commands. One binary.</h2>
+  <span class="ig-eyebrow">Start with one repo</span>
+  <h2 class="ig-section-title">Protect a repo in 30 seconds.</h2>
   <p class="ig-section-lede">
-    Brew on macOS &amp; Linux. Pre-built static binary for Windows. Single static binary, no runtime.
+    Single static binary. No daemon, no service, and no package-manager
+    migration required.
   </p>
   <div style="margin-top: 2rem;">
     <QuickStart />
