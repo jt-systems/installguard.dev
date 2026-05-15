@@ -7,19 +7,19 @@ A **signal** is a single fact about a `(name, version)` pair, produced by a `Sig
 
 | Signal | What it means | Source |
 |---|---|---|
-| `published_at` | When this version was first published | npm registry |
+| `published_at` | When this version was first published | npm registry / PyPI JSON API |
 | `lifecycle_scripts` | `preinstall` / `install` / `postinstall` / `preuninstall` / `postuninstall` declared | npm registry |
 | `suspicious_script` | Lifecycle script body matched a high-risk pattern | static analysis of script source |
 | `version_surface_change` | New `bin` entries or lifecycle scripts vs. previous release | npm registry diff |
 | `dist_tag_anomaly` | `latest` points at a strictly older major than the highest published | npm registry |
 | `publisher_change` | Different `_npmUser` than the previous version | npm registry |
-| `deprecated_version` | Maintainer marked this version deprecated | npm registry |
+| `deprecated_version` | Maintainer marked this version deprecated, or PyPI release was yanked ([PEP 592](https://peps.python.org/pep-0592/)) | npm registry / PyPI JSON API |
 | `name_squat` | Distance-1 typo or homoglyph match against the popular-package list | local heuristic |
 | `maintainer_new_account` | The publishing npm account is younger than the configured threshold | npm registry |
-| `advisory_known` | Advisory matches this exact name@version | OSV |
+| `advisory_known` | Advisory matches this exact name@version | OSV (npm + PyPI) |
 | `provenance_claimed` | npm provenance bundle present and digest matches the tarball | npm registry |
-| `project_metadata` | Licences and archived flag from a third-party catalogue | deps.dev |
+| `project_metadata` | Licences and archived flag from a third-party catalogue | deps.dev (npm + pypi) |
 | `scorecard_score` | OpenSSF Scorecard aggregate score for the upstream repo | scorecard.dev |
 | `unavailable` | A provider could not produce signals for this package | provider |
 
-Signals are *facts*, not *judgements*. Whether a signal becomes a `Reason` (and at what severity) is determined by [the policy](/concepts/policy/).
+Signals are *facts*, not *judgements*. Whether a signal becomes a `Reason` (and at what severity) is determined by [the policy](/concepts/policy/). For the per-ecosystem coverage matrix, see [Ecosystems](/concepts/ecosystems/).

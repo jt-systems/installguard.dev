@@ -13,7 +13,7 @@ export default defineConfig({
     starlight({
       title: "InstallGuard",
       description:
-        "Policy gate for npm/pnpm/yarn installs. Blocks risky dependencies before they touch your CI or your machine.",
+        "Policy gate for npm/pnpm/yarn/PyPI installs. Blocks risky dependencies before they touch your CI or your machine.",
       logo: {
         light: "./src/assets/wordmark-light.svg",
         dark: "./src/assets/wordmark-dark.svg",
@@ -43,6 +43,7 @@ export default defineConfig({
             { label: "Policy", slug: "concepts/policy" },
             { label: "Severity model", slug: "concepts/severity" },
             { label: "Decisions", slug: "concepts/decisions" },
+            { label: "Ecosystems", slug: "concepts/ecosystems" },
             { label: "Workspaces", slug: "concepts/workspaces" },
           ],
         },
