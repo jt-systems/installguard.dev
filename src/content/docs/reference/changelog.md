@@ -5,6 +5,14 @@ description: What shipped in each InstallGuard release.
 
 The canonical changelog lives in the repo at [`CHANGELOG.md`](https://github.com/jt-systems/installguard/blob/main/CHANGELOG.md). This page mirrors the user-facing highlights.
 
+## 0.3.2 — 2026-05-15
+
+**Release-workflow asset-upload race fix.** The v0.3.1 release job's `softprops/action-gh-release` `files:` glob list had three redundant entries (`*.cosign.bundle`, `*.sig`, `*.pem`) that overlapped with the broader `installguard-*` glob — the cosign sidecars are themselves named `installguard-<target>.cosign.bundle` etc. The action uploaded each sidecar twice concurrently and hit GitHub's "asset already exists" race-condition path, ultimately failing the publish job hard, which skipped the SLSA provenance and Homebrew tap-bump downstream jobs. v0.3.0 was lucky and didn't trip the race.
+
+Collapsed to two non-overlapping globs (`installguard-*` + `checksums.txt*`). v0.3.1's binaries and cosign bundles are still on the GitHub release but it is missing SLSA provenance and the Homebrew tap was not bumped — use **v0.3.2** for the full release.
+
+No source changes vs 0.3.1.
+
 ## 0.3.1 — 2026-05-15
 
 Three small correctness fixes — none change a verdict on existing fixtures, but each closes a "silent in the wrong direction" hole.
