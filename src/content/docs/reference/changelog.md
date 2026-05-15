@@ -5,6 +5,14 @@ description: What shipped in each InstallGuard release.
 
 The canonical changelog lives in the repo at [`CHANGELOG.md`](https://github.com/jt-systems/installguard/blob/main/CHANGELOG.md). This page mirrors the user-facing highlights.
 
+## 0.2.8 — 2026-05-15
+
+**Yarn workspace member `package.json` files are now walked for direct-dep detection.** The Yarn Berry adapter previously only read the root `package.json`. In a typical monorepo the root has only `devDependencies` (or is entirely empty under `private: true` with everything declared in `packages/*/package.json`); every member dep was therefore demoted to "transitive" and any `directOnly` policy rule silently no-op'd against them.
+
+The adapter now reads the root's `workspaces` field (both shapes — bare array `["packages/*", "apps/web"]` and the Yarn-1 nohoist-compatibility object form `{ "packages": [...] }`), expands each pattern under the lockfile's parent directory, and unions direct-dep specs across the root and every member. Two glob shapes are supported: literal segments (`packages/web`) and trailing single-star (`packages/*`); these cover the overwhelming majority of real workspaces. `**` and other exotic globs are deliberately not supported.
+
+The pnpm and npm adapters were already at parity — pnpm records the workspace member graph in `pnpm-lock.yaml`'s `importers` map, and `package-lock.json` v3 stores the workspace tree under its `packages` field. This release brings yarn level with them.
+
 ## 0.2.7 — 2026-05-15
 
 **purl is now ecosystem-aware, and the lock format records each entry's ecosystem.** Two related correctness fixes that an external review surfaced.
