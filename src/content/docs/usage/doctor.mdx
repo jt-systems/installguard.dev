@@ -1,0 +1,101 @@
+---
+title: doctor
+description: Triage findings and emit a paste-ready installguard.yaml block.
+---
+
+import DocTerminal from "../../../components/DocTerminal.astro";
+import { dim, fg, joinTerminalLines, mid, ok, prompt, warn } from "../../../components/terminalAnsi";
+
+export const synopsisBody = joinTerminalLines([
+  prompt("installguard doctor [--policy installguard.yaml]"),
+]);
+
+export const exampleBody = joinTerminalLines([
+  prompt("installguard doctor"),
+  fg("InstallGuard doctor — pnpm"),
+  `${dim("  1276 packages — ")}${warn("3 block")}${dim(" · 0 warn")}`,
+  ``,
+  fg("Lifecycle scripts (2 packages):"),
+  `${mid("  • core-js (postinstall)")}`,
+  `${mid("  • @firebase/util (postinstall)")}`,
+  `${dim("  Review each package's install script before allowing — see")}`,
+  `${dim("  https://www.npmjs.com/package/&lt;name&gt; and the package's source.")}`,
+  ``,
+  fg("Name-squat allowlist candidates (1):"),
+  `${mid("  • gaxios (resembles `axios`)")}`,
+  `${dim("  Add ONLY if you've confirmed each package is the legitimate one")}`,
+  `${dim("  you intended (e.g. `gaxios` is Google's official HTTP client).")}`,
+  ``,
+  ok("Suggested installguard.yaml additions:"),
+  dim("─────────────────────────────────────────"),
+  fg("policyVersion: 1"),
+  ``,
+  fg("defaults:"),
+  fg("  nameSquatAllow:"),
+  fg("    - gaxios                       # resembles `axios` — verify before allowing"),
+  ``,
+  fg("scripts:"),
+  fg("  allow:"),
+  fg("    - core-js                      # postinstall — review the script before allowing"),
+  fg('    - "@firebase/util"             # postinstall — review the script before allowing'),
+]);
+
+export const workflowBody = joinTerminalLines([
+  dim("# 1. Run doctor and review the suggestions."),
+  prompt("installguard doctor"),
+  ``,
+  dim("# 2. Vet each entry against the package's source and the"),
+  dim("#    advisory you triggered. Don't blanket-paste."),
+  ``,
+  dim("# 3. Append the parts you accept to installguard.yaml, then verify."),
+  prompt("installguard scan"),
+]);
+
+<DocTerminal title="~/work/your-project · doctor" body={synopsisBody} />
+
+`doctor` runs the same evaluation pipeline as [`scan`](/usage/scan/), but
+instead of printing a verdict it groups the actionable findings by class
+and emits a ready-to-paste `installguard.yaml` block that resolves the
+false positives we have a known fix for.
+
+It is **advisory only** — it always exits `0`. Use `scan` or `ci` to gate.
+
+## When to use it
+
+- First run on a new repo: you got a wall of blocks and want a starting
+  policy you can iterate on.
+- After upgrading InstallGuard: a new heuristic flagged a long tail of
+  packages and you want to sweep them into one config block.
+- Onboarding a new monorepo workspace: produce a per-workspace policy
+  scaffold without hand-walking the output of `scan`.
+
+## What it suggests
+
+| Block class | Suggested fix |
+|---|---|
+| `disallowed-lifecycle-script` | `scripts.allow` entry per package, commented with the scripts seen so reviewers vet before allowing. |
+| `name-squat` | `defaults.nameSquatAllow` entry per package, commented with the package each one resembles. **Verify legitimacy before allowing.** |
+| `dist-tag-anomaly` (blocking) | `severity: dist-tag-anomaly: warn` — its default since 0.1.6. Surfacing this means the operator had locally promoted it. |
+| `signal-unavailable` (blocking) | `severity: signal-unavailable: warn` — its default since 0.1.7. Same pattern. |
+
+Other block classes (`vulnerable-version`, `withdrawn-version`,
+`suspicious-script`, etc.) are not suggested — these are the classes
+where the right answer is almost never "allowlist it" and `doctor` will
+not paper over them.
+
+## Example
+
+<DocTerminal title="~/work/your-project · doctor output" body={exampleBody} />
+
+Paste the block (or the parts you've vetted) into your `installguard.yaml`
+and re-run `scan` to confirm it goes green.
+
+## Workflow
+
+<DocTerminal title="~/work/your-project · doctor workflow" body={workflowBody} />
+
+## Exit codes
+
+`doctor` always exits `0`. Errors in the underlying evaluation
+(unparseable lockfile, bad policy file, etc.) still surface as
+non-zero — but a non-empty list of blocks is **not** an error.

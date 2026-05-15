@@ -3,19 +3,59 @@ title: Install
 description: How to install InstallGuard.
 ---
 
+import DocTerminal from "../../../components/DocTerminal.astro";
+import { fg, joinTerminalLines, prompt } from "../../../components/terminalAnsi";
+
+export const brewInstallBody = joinTerminalLines([
+  prompt("brew install jt-systems/installguard/installguard"),
+]);
+
+export const cargoInstallBody = joinTerminalLines([
+  prompt("cargo install --git https://github.com/jt-systems/installguard installguard --locked"),
+]);
+
+export const cosignInstallBody = joinTerminalLines([
+  prompt("brew install cosign"),
+]);
+
+export const verifyReleaseBody = joinTerminalLines([
+  `${prompt("cosign verify-blob \\")}`,
+  `${fg("  --certificate-identity-regexp '^https://github.com/jt-systems/installguard/\\.github/workflows/release\\.yml@refs/tags/v.*$' \\")}`,
+  `${fg("  --certificate-oidc-issuer 'https://token.actions.githubusercontent.com' \\")}`,
+  `${fg("  --bundle installguard-aarch64-apple-darwin.cosign.bundle \\")}`,
+  `${fg("  installguard-aarch64-apple-darwin")}`,
+]);
+
+export const slsaVerifyBody = joinTerminalLines([
+  `${prompt("slsa-verifier verify-artifact \\")}`,
+  `${fg("  --provenance-path installguard-&lt;tag&gt;.intoto.jsonl \\")}`,
+  `${fg("  --source-uri github.com/jt-systems/installguard \\")}`,
+  `${fg("  --source-tag &lt;tag&gt; \\")}`,
+  `${fg("  installguard-&lt;target&gt;")}`,
+]);
+
+export const versionCheckBody = joinTerminalLines([
+  prompt("installguard --version"),
+  fg("installguard &lt;version&gt;"),
+]);
+
+export const brewUpdateBody = joinTerminalLines([
+  prompt("brew update && brew upgrade installguard"),
+]);
+
+export const cargoUpdateBody = joinTerminalLines([
+  prompt("cargo install --git https://github.com/jt-systems/installguard installguard --locked --force"),
+]);
+
 ## macOS / Linux (Homebrew)
 
-```sh
-brew install jt-systems/installguard/installguard
-```
+<DocTerminal title="macOS · Linux" body={brewInstallBody} />
 
 The tap installs a single static binary; no Ruby, Python, or Node runtime is required.
 
 ## From source (any platform with Rust ≥ 1.86)
 
-```sh
-cargo install --git https://github.com/jt-systems/installguard installguard --locked
-```
+<DocTerminal title="Any platform · cargo install" body={cargoInstallBody} />
 
 ## Pre-built binaries
 
@@ -35,24 +75,16 @@ Every release artefact is signed by the [release workflow](https://github.com/jt
 
 You'll need cosign ≥ 2.0:
 
-```sh
-brew install cosign
-```
+<DocTerminal title="macOS · Linux · install cosign" body={cosignInstallBody} />
 
 Then, from the directory where you downloaded the binary plus its `.cosign.bundle` sidecar:
 
-```sh
-cosign verify-blob \
-  --certificate-identity-regexp '^https://github.com/jt-systems/installguard/\.github/workflows/release\.yml@refs/tags/v.*$' \
-  --certificate-oidc-issuer 'https://token.actions.githubusercontent.com' \
-  --bundle installguard-aarch64-apple-darwin.cosign.bundle \
-  installguard-aarch64-apple-darwin
-```
+<DocTerminal title="~/Downloads · verify release" body={verifyReleaseBody} />
 
 A successful verification prints `Verified OK` and exits 0. Both flags are mandatory — without them an attacker who can mint *any* Fulcio cert could forge a signature.
 
 For stricter pinning to a specific release, swap `v.*` for the exact tag
-(for example `v0.3.4`) in the identity regex.
+(for example `v0.3.3`) in the identity regex.
 
 The same command verifies `checksums.txt` against `checksums.txt.cosign.bundle` if you'd rather verify one signature and trust the SHA-256 chain to the binaries.
 
@@ -67,23 +99,15 @@ each binary's bytes, and is signed via the same Fulcio/Rekor path.
 
 Verify with [slsa-verifier](https://github.com/slsa-framework/slsa-verifier):
 
-```sh
-slsa-verifier verify-artifact \
-  --provenance-path installguard-<tag>.intoto.jsonl \
-  --source-uri github.com/jt-systems/installguard \
-  --source-tag <tag> \
-  installguard-<target>
-```
+<DocTerminal title="~/Downloads · verify provenance" body={slsaVerifyBody} />
 
-Replace `<tag>` with the release you downloaded (for example `v0.3.4`)
+Replace `<tag>` with the release you downloaded (for example `v0.3.3`)
 and `<target>` with the binary filename you verified above (for example
 `aarch64-apple-darwin`).
 
 ## Sanity-check the install
 
-```sh
-installguard --version
-```
+<DocTerminal title="~/work/bin · version check" body={versionCheckBody} />
 
 Expected output is the version number. If you get "command not found", make sure `$(brew --prefix)/bin` (or wherever your binary lives) is on `$PATH`.
 
@@ -93,15 +117,11 @@ InstallGuard is alpha (`0.x`) and ships fixes regularly — keep up with the lat
 
 **Homebrew:**
 
-```sh
-brew update && brew upgrade installguard
-```
+<DocTerminal title="macOS · Linux · Homebrew update" body={brewUpdateBody} />
 
 **Cargo (from source):** re-run the same install command; `cargo install` overwrites the existing binary in place.
 
-```sh
-cargo install --git https://github.com/jt-systems/installguard installguard --locked --force
-```
+<DocTerminal title="Any platform · cargo update" body={cargoUpdateBody} />
 
 **Pre-built binary:** download the new release from [GitHub Releases](https://github.com/jt-systems/installguard/releases/latest), [verify it](#verify-a-downloaded-binary), and replace the binary on your `$PATH`.
 

@@ -3,9 +3,25 @@ title: scan
 description: Scan a lockfile and render verdicts to the terminal.
 ---
 
-```sh
-installguard scan [--policy installguard.yaml] [--format pretty|human|json]
-```
+import DocTerminal from "../../../components/DocTerminal.astro";
+import { dim, fg, joinTerminalLines, prompt } from "../../../components/terminalAnsi";
+
+export const synopsisBody = joinTerminalLines([
+  prompt("installguard scan [--policy installguard.yaml] [--format pretty|human|json]"),
+]);
+
+export const examplesBody = joinTerminalLines([
+  dim("# Default scan"),
+  prompt("installguard scan"),
+  ``,
+  dim("# Use an explicit policy file"),
+  prompt("installguard scan --policy ./.installguard/strict.yaml"),
+  ``,
+  dim("# JSON output for piping into another tool"),
+  prompt("installguard scan --format json | jq '.summary'"),
+]);
+
+<DocTerminal title="~/work/your-project · scan" body={synopsisBody} />
 
 Auto-detects supported lockfiles in the current directory:
 `package-lock.json`, `pnpm-lock.yaml`, `yarn.lock`, `uv.lock`,
@@ -29,13 +45,4 @@ Auto-detects supported lockfiles in the current directory:
 
 ## Examples
 
-```sh
-# Default scan
-installguard scan
-
-# Use an explicit policy file
-installguard scan --policy ./.installguard/strict.yaml
-
-# JSON output for piping into another tool
-installguard scan --format json | jq '.summary'
-```
+<DocTerminal title="~/work/your-project · scan examples" body={examplesBody} />

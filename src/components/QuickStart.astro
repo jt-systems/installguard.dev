@@ -5,23 +5,19 @@
  * whitespace-preservation reason as ScanDemo.
  */
 import Terminal from "./Terminal.astro";
+import { comment, fg, joinTerminalLines } from "./terminalAnsi";
 
-const ansi = (tone: string, text: string) =>
-  `<span class="ig-ansi ig-ansi--${tone}">${text}</span>`;
-const dim = (t: string) => ansi("dim", t);
-const fg = (t: string) => ansi("fg", t);
-
-const body = [
-  `${dim("# 1. Install")}`,
+const body = joinTerminalLines([
+  comment("1. Install"),
   `${fg("brew install jt-systems/installguard/installguard")}`,
   ``,
-  `${dim("# 2. Scan any supported repo")}`,
+  comment("2. Scan any supported repo"),
   `${fg("cd ~/work/your-project")}`,
   `${fg("installguard scan")}`,
   ``,
-  `${dim("# 3. Wire it into CI (exit code 1 on block)")}`,
+  comment("3. Wire it into CI (exit code 1 on block)"),
   `${fg("installguard ci --summary-file summary.json")}`,
-].join("\n");
+]);
 ---
 
 <Terminal title="macOS · Linux · WSL" body={body} />

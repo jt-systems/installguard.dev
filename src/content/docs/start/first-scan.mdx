@@ -1,0 +1,118 @@
+---
+title: Your first scan
+description: Run InstallGuard against an existing npm, pnpm, yarn, or PyPI project in 30 seconds.
+---
+
+import DocTerminal from "../../../components/DocTerminal.astro";
+import { dim, err, fg, joinTerminalLines, mid, ok, prompt, warn } from "../../../components/terminalAnsi";
+
+export const scanCommandBody = joinTerminalLines([prompt("installguard scan")]);
+
+export const cleanVerdictBody = joinTerminalLines([
+  ok("✓ InstallGuard — Clean"),
+  `${dim("  1276 packages — ")}${ok("1276 allow")}${dim(" · 0 warn · 0 block")}`,
+  ``,
+  fg("  All 1276 dependencies passed policy."),
+]);
+
+export const warningVerdictBody = joinTerminalLines([
+  warn("! InstallGuard — Warnings"),
+  `${dim("  1276 packages — 1270 allow · ")}${warn("6 warn")}${dim(" · 0 block")}`,
+  ``,
+  warn("WARN"),
+  `${fg("  some-package@1.2.3")}`,
+  `${mid("    • published 18 hours ago — below 24h cooling-off threshold")}`,
+  `${dim("      ↳ wait it out, or lower minimumReleaseAge in installguard.yaml")}`,
+  ``,
+  fg("Next steps"),
+  `${mid("  • Investigate each finding on its registry page")}`,
+  `${mid("  • If intentional, allowlist in installguard.yaml (see `installguard schema`)")}`,
+  `${mid("  • Once green, freeze decisions with `installguard lock` for reproducible CI")}`,
+  `${mid("  • If you believe this is a real attack, report to github.com/advisories/new")}`,
+]);
+
+export const blockedVerdictBody = joinTerminalLines([
+  err("✗ InstallGuard — BLOCKED"),
+  `${dim("  1276 packages — 1273 allow · 0 warn · ")}${err("3 block")}`,
+  ``,
+  err("BLOCK"),
+  `${fg("  fsevents@2.3.3")}`,
+  `${mid("    • install-time lifecycle script `install` declared")}`,
+  `${dim("      ↳ allowlist the package under scripts.allow if you trust the publisher")}`,
+  ``,
+  fg("Next steps"),
+  `${mid("  • Investigate the package on its registry page (e.g. npmjs.com or PyPI)")}`,
+  `${mid("  • If intentional, allowlist in installguard.yaml (see `installguard schema`)")}`,
+  `${mid("  • Once green, freeze decisions with `installguard lock` for reproducible CI")}`,
+  `${mid("  • If you believe this is a real attack, report to github.com/advisories/new")}`,
+]);
+
+export const flagsBody = joinTerminalLines([
+  dim("# Use an explicit policy file"),
+  prompt("installguard scan --policy ./.installguard/strict.yaml"),
+  ``,
+  dim("# JSON output for piping"),
+  prompt("installguard scan --format json | jq '.summary'"),
+  ``,
+  dim("# Fully offline / air-gapped (requires a previously-generated lock)"),
+  prompt("installguard lock"),
+  prompt("installguard scan --frozen"),
+]);
+
+In any directory that contains a supported lockfile, for example
+`package-lock.json`, `pnpm-lock.yaml`, `yarn.lock`, `uv.lock`,
+`poetry.lock`, or a hash-pinned `requirements.txt`:
+
+<DocTerminal title="~/work/your-project · first scan" body={scanCommandBody} />
+
+No config required. InstallGuard auto-detects the lockfile, applies its
+built-in defaults, and prints a grouped verdict. Drop an
+`installguard.yaml` next to the lockfile when you want to tune
+thresholds — see [Concepts › Policy](/concepts/policy/).
+
+You will see one of three verdicts.
+
+## ✓ Clean
+
+<DocTerminal title="~/work/your-project · clean verdict" body={cleanVerdictBody} />
+
+Nothing tripped a `block` rule. Warnings are advisory; they don't change
+the exit code on `scan`. Exit `0`.
+
+## ! Warnings
+
+<DocTerminal title="~/work/your-project · warning verdict" body={warningVerdictBody} />
+
+A signal fired and your policy rendered it as `warn` rather than
+`block`. The scan exits `0`, so your install flow can proceed. To make
+`scan` exit non-zero on any warning, use `installguard ci --max-warn 0`
+instead — see [Usage › ci](/usage/ci/).
+
+## ✗ BLOCKED
+
+<DocTerminal title="~/work/your-project · blocked verdict" body={blockedVerdictBody} />
+
+InstallGuard exits `1`. Your CI step fails. Three ways forward:
+
+1. **Fix the underlying issue** — downgrade, swap dependency, wait out a
+   cooling-off period.
+2. **Triage with `installguard doctor`** — it inspects the same project,
+   classifies findings as actionable false positives, and prints a
+   ready-to-paste `installguard.yaml` snippet that resolves them. See
+   [Usage › doctor](/usage/doctor/).
+3. **Hand-edit `installguard.yaml`** — add a per-package exception or
+   relax a threshold. The [policy schema](/usage/policy-yaml/) is also
+   available via `installguard schema` for editor autocomplete.
+
+## Other useful flags
+
+<DocTerminal title="~/work/your-project · useful flags" body={flagsBody} />
+
+See [Usage › scan](/usage/scan/) for the full flag reference and exit codes.
+
+## Next steps
+
+- [Concepts › Signals](/concepts/signals/) — what each detector looks for.
+- [Concepts › Policy](/concepts/policy/) — how to write `installguard.yaml`.
+- [Usage › doctor](/usage/doctor/) — turn a noisy first run into a green one.
+- [Recipes › GitHub Actions](/recipes/github-actions/) — wire it into CI.

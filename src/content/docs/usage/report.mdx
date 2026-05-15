@@ -1,0 +1,43 @@
+---
+title: report
+description: Render a CI summary as a sticky pull-request comment.
+---
+
+import DocTerminal from "../../../components/DocTerminal.astro";
+import { dim, fg, joinTerminalLines, prompt } from "../../../components/terminalAnsi";
+
+export const synopsisBody = joinTerminalLines([
+  prompt("installguard report --from summary.json [--max-rows 50] [--commit SHA] [--exit-code N]"),
+]);
+
+export const pipelineBody = joinTerminalLines([
+  dim("# Preserve the scan result before you render the comment"),
+  fg("set +e"),
+  prompt("installguard ci --summary-file summary.json"),
+  fg("exit_code=$?"),
+  fg("set -e"),
+  ``,
+  `${prompt("installguard report --from summary.json --commit \"$GITHUB_SHA\" --exit-code \"$exit_code\" \\")}`,
+  `${fg("  > comment.md")}`,
+  dim("# then post comment.md via your CI's comment-update mechanism"),
+  fg('exit "$exit_code"'),
+]);
+
+<DocTerminal title="CI · render report" body={synopsisBody} />
+
+Reads a `installguard ci --summary-file` JSON document and renders it as a Markdown body suitable for posting as a GitHub PR / GitLab MR sticky comment.
+
+The output:
+
+- Includes the `<!-- installguard-summary -->` HTML marker so sticky-comment tools (e.g. [marocchino/sticky-pull-request-comment](https://github.com/marocchino/sticky-pull-request-comment)) update in place rather than spamming.
+- Escapes pipe characters in reason cells so Markdown tables render correctly even with weird package names.
+- Truncates with `--max-rows`; the first N most-severe rows are kept.
+- Optionally surfaces commit SHA and exit code in the footer.
+
+## Typical pipeline
+
+<DocTerminal title="GitHub Actions · sticky comment flow" body={pipelineBody} />
+
+Capture the exit code before you run anything else, especially in
+`set -e` shells. The [GitHub Actions recipe](/recipes/github-actions/)
+shows the same pattern in workflow form.

@@ -6,18 +6,10 @@
  * whitespace normalisation.
  */
 import Terminal from "./Terminal.astro";
+import { dim, err, fg, joinTerminalLines, mid, ok, prompt, warn } from "./terminalAnsi";
 
-const ansi = (tone: string, text: string) =>
-  `<span class="ig-ansi ig-ansi--${tone}">${text}</span>`;
-const dim = (t: string) => ansi("dim", t);
-const mid = (t: string) => ansi("mid", t);
-const fg = (t: string) => ansi("fg", t);
-const ok = (t: string) => ansi("ok", t);
-const warn = (t: string) => ansi("warn", t);
-const err = (t: string) => ansi("err", t);
-
-const body = [
-  `${dim("$")} ${fg("installguard scan")}`,
+const body = joinTerminalLines([
+  prompt("installguard scan"),
   `${ok("  ✓ 1,273 packages cleared")}`,
   `${dim("    policy v1 · cache hit 99.8% · 1.84s")}`,
   ``,
@@ -34,7 +26,7 @@ const body = [
   `${dim("  Summary  ")}${ok("1273 allow")}${dim(" · ")}${warn("1 warn")}${dim(" · ")}${err("2 block")}`,
   `${dim("$")} ${dim("echo $?")}`,
   `${fg("1")}`,
-].join("\n");
+]);
 ---
 
 <Terminal title="~/work/api · installguard scan" body={body} />

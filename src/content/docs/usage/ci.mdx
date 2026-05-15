@@ -3,9 +3,14 @@ title: ci
 description: Run InstallGuard inside CI with structured output for runners.
 ---
 
-```sh
-installguard ci [--summary-file summary.json] [--max-warn N]
-```
+import DocTerminal from "../../../components/DocTerminal.astro";
+import { joinTerminalLines, prompt } from "../../../components/terminalAnsi";
+
+export const synopsisBody = joinTerminalLines([
+  prompt("installguard ci [--summary-file summary.json] [--max-warn N]"),
+]);
+
+<DocTerminal title="CI · installguard ci" body={synopsisBody} />
 
 Same gating semantics as `scan`, with two CI-friendly extras:
 
