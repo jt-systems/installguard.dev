@@ -20,10 +20,78 @@ const { title, body } = Astro.props;
 
 <div class="ig-terminal">
   <div class="ig-terminal-bar">
-    <span class="ig-terminal-dot ig-terminal-dot--red"></span>
-    <span class="ig-terminal-dot ig-terminal-dot--amber"></span>
-    <span class="ig-terminal-dot ig-terminal-dot--green"></span>
-    {title && <span class="ig-terminal-title">{title}</span>}
+    <div class="ig-terminal-bar-main">
+      <span class="ig-terminal-dot ig-terminal-dot--red"></span>
+      <span class="ig-terminal-dot ig-terminal-dot--amber"></span>
+      <span class="ig-terminal-dot ig-terminal-dot--green"></span>
+      {title && <span class="ig-terminal-title">{title}</span>}
+    </div>
+    <button
+      class="ig-terminal-copy"
+      type="button"
+      aria-label="Copy terminal contents"
+      title="Copy to clipboard"
+      data-copied-label="Copied!"
+    >
+      <span class="sr-only">Copy terminal contents</span>
+    </button>
   </div>
   <pre class="ig-terminal-body"><code set:html={body} /></pre>
 </div>
+
+<script is:inline>
+  if (!window.__igTerminalCopyBound) {
+    window.__igTerminalCopyBound = true;
+
+    const fallbackCopyText = (text) => {
+      const textarea = document.createElement("textarea");
+      textarea.value = text;
+      textarea.setAttribute("readonly", "");
+      textarea.style.position = "fixed";
+      textarea.style.top = "-9999px";
+      textarea.style.left = "-9999px";
+      document.body.appendChild(textarea);
+      textarea.select();
+      textarea.setSelectionRange(0, textarea.value.length);
+
+      try {
+        return document.execCommand("copy");
+      } finally {
+        document.body.removeChild(textarea);
+      }
+    };
+
+    document.addEventListener("click", async (event) => {
+      const button = event.target.closest(".ig-terminal-copy");
+      if (!(button instanceof HTMLButtonElement)) return;
+
+      const terminal = button.closest(".ig-terminal");
+      const code = terminal?.querySelector(".ig-terminal-body code");
+      const text = code?.textContent?.trimEnd();
+      if (!text) return;
+
+      try {
+        if (navigator.clipboard?.writeText) {
+          await navigator.clipboard.writeText(text);
+        } else if (!fallbackCopyText(text)) {
+          throw new Error("Copy failed");
+        }
+      } catch {
+        if (!fallbackCopyText(text)) {
+          delete button.dataset.copied;
+          return;
+        }
+      }
+
+      try {
+        button.dataset.copied = "true";
+        clearTimeout(button.__igTerminalCopyTimer);
+        button.__igTerminalCopyTimer = window.setTimeout(() => {
+          delete button.dataset.copied;
+        }, 1600);
+      } catch {
+        // Ignore timer cleanup issues; the copy already succeeded.
+      }
+    });
+  }
+</script>
