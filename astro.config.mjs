@@ -82,6 +82,8 @@ export default defineConfig({
             { label: "GitHub Actions", slug: "recipes/github-actions" },
             { label: "GitLab CI", slug: "recipes/gitlab-ci" },
             { label: "Dependency bots", slug: "recipes/dependency-bots" },
+            { label: "Gradual adoption", slug: "recipes/gradual-adoption" },
+            { label: "Air-gapped promotion", slug: "recipes/air-gapped-promotion" },
             { label: "Monorepos", slug: "recipes/monorepos" },
             { label: "Expo + monorepo case study", slug: "recipes/expo-monorepo" },
           ],
