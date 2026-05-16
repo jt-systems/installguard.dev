@@ -8,7 +8,9 @@ into your editor's YAML language server and you'll get keyword
 autocomplete, type validation as you type, hover docs for every field,
 and squigglies on typos before you save.
 
-## The schema URL
+## Published schema URL
+
+Use this URL directly in editors that support remote schema mappings:
 
 ```
 https://raw.githubusercontent.com/jt-systems/installguard/main/schemas/installguard-policy.schema.json
@@ -19,13 +21,20 @@ The schema is generated from the same Rust types the CLI uses
 committed file never drifts from the binary's behaviour. So whatever
 your editor accepts, the CLI also accepts.
 
-Every example below targets the same default policy locations:
+## Default policy file targets
+
+Every example below targets the same common policy locations:
 
 - `installguard.yaml`
 - `.installguard/*.yaml`
 - `.installguard/*.yml`
 
-## VS Code
+If your repo keeps the policy elsewhere, keep the same schema URL and
+change only the file patterns.
+
+## Editor mappings
+
+### VS Code
 
 **Where:** user or workspace `settings.json`<br />
 **Requires:** [Red Hat's YAML extension](https://marketplace.visualstudio.com/items?itemName=redhat.vscode-yaml)
@@ -47,7 +56,7 @@ Add this mapping:
 **Check:** open `installguard.yaml` and confirm you get completion,
 hover docs, and validation errors for bad keys.
 
-## Zed
+### Zed
 
 **Where:** `settings.json`<br />
 **Requires:** none; Zed bundles `yaml-language-server`
@@ -77,7 +86,7 @@ Add this mapping:
 **Check:** reopen `installguard.yaml` and confirm Zed offers schema-backed
 completion and squiggles on invalid fields.
 
-## JetBrains IDEs (IntelliJ / WebStorm / RustRover / PyCharm)
+### JetBrains IDEs (IntelliJ / WebStorm / RustRover / PyCharm)
 
 **Where:** **Settings → Languages & Frameworks → Schemas and DTDs → JSON Schema Mappings**<br />
 **Requires:** none; JetBrains ships the mapper built in
@@ -95,7 +104,7 @@ Create one mapping with:
 **Check:** hit **OK**, open `installguard.yaml`, and confirm the IDE
 shows `installguard` in the bottom status bar.
 
-## Neovim (yaml-language-server)
+### Neovim (yaml-language-server)
 
 **Where:** your `yamlls` config<br />
 **Requires:** [nvim-lspconfig](https://github.com/neovim/nvim-lspconfig)
@@ -126,7 +135,7 @@ For [SchemaStore.nvim](https://github.com/b0o/SchemaStore.nvim) users,
 the InstallGuard schema is not yet on SchemaStore, so keep using the
 explicit mapping above until it lands.
 
-## Inline `# yaml-language-server` comment
+## Modeline fallback
 
 If you can't or don't want to configure your editor globally, drop this
 modeline at the top of any policy file and most YAML LSPs will pick it
@@ -142,7 +151,7 @@ This works in VS Code, Zed, Neovim, and any other editor running
 yaml-language-server. JetBrains IDEs ignore the modeline — use the
 **JSON Schema Mappings** dialog above.
 
-## Pinning to a specific version
+## Version pinning
 
 The URL above tracks `main` and will reflect any new fields the next
 release adds. To pin to a specific InstallGuard version, swap `main`

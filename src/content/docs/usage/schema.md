@@ -21,19 +21,31 @@ no chance of drift between docs and code.
 - Diff the schema between InstallGuard releases to see what new policy knobs
   showed up.
 
-## Example: editor integration
+## Default policy file targets
+
+Whether you use a local generated schema or the published URL, the common
+policy targets are:
+
+- `installguard.yaml`
+- `.installguard/*.yaml`
+- `.installguard/*.yml`
+
+## Generate a repo-local schema
+
+Use a local file when you want the editor schema to track the exact
+InstallGuard binary already standardized in the repo:
 
 ```sh
-mkdir -p .vscode
-installguard schema > .vscode/installguard-policy.schema.json
+mkdir -p .installguard
+installguard schema > .installguard/installguard-policy.schema.json
 ```
 
-Then in `.vscode/settings.json`:
+Then point your editor at that local file. For example, in VS Code:
 
 ```jsonc
 {
   "yaml.schemas": {
-    ".vscode/installguard-policy.schema.json": [
+    ".installguard/installguard-policy.schema.json": [
       "installguard.yaml",
       ".installguard/*.yaml",
       ".installguard/*.yml"
@@ -42,14 +54,16 @@ Then in `.vscode/settings.json`:
 }
 ```
 
-VS Code's YAML extension will now validate every `installguard.yaml` in the
-workspace and the common `.installguard/` policy files too.
+The exact mapping syntax varies by editor; [Editor setup](/usage/editor-setup/)
+has ready-to-paste snippets for VS Code, Zed, JetBrains, and Neovim.
 
-## Stable URL
+## Published URL
 
-A canonical version of the schema is also published in the InstallGuard repo
-at [`schemas/installguard-policy.schema.json`](https://github.com/jt-systems/installguard/blob/main/schemas/installguard-policy.schema.json),
-so you can reference it directly without invoking the binary:
+If you do not want to generate a local file, the canonical schema is
+also published in the InstallGuard repo at
+[`schemas/installguard-policy.schema.json`](https://github.com/jt-systems/installguard/blob/main/schemas/installguard-policy.schema.json).
+
+In VS Code, that looks like:
 
 ```jsonc
 {
@@ -63,8 +77,15 @@ so you can reference it directly without invoking the binary:
 }
 ```
 
-Pin a tag (`/main/` → `/v0.1.18/`) when you want reproducibility across an
+Pin a tag (`/main/` → `/v0.3.4/`) when you want reproducibility across an
 InstallGuard upgrade.
+
+## Which path should you use?
+
+| Option | Best for |
+|---|---|
+| Published URL | Quick setup, centrally managed updates, and repos happy to track the current schema on `main`. |
+| Local generated file | Teams that want the editor schema to match the exact InstallGuard binary version already pinned in CI. |
 
 ## Related
 
