@@ -40,14 +40,14 @@ import ScanDemo from "../../components/ScanDemo.astro";
       <p class="ig-card-body">Deny-by-default policy on <span class="ig-chip">preinstall</span>, <span class="ig-chip">install</span>, <span class="ig-chip">postinstall</span>, PyPI <span class="ig-chip">setup.py</span>, and in-tree <span class="ig-chip">backend-path</span> build backends, with a curated allowlist for native-binary packages and pattern-based detection of obfuscated payloads across both shell and Python.</p>
     </article>
     <article class="ig-card">
-      <div class="ig-card-eyebrow">Velocity</div>
-      <h3 class="ig-card-title">Too-fresh releases &amp; sudden drift</h3>
+      <div class="ig-card-eyebrow">Release trust</div>
+      <h3 class="ig-card-title">Cooling-off windows for new releases</h3>
       <p class="ig-card-body">Configurable minimum release age (default: 24h). Flags new <span class="ig-chip">bin</span> entries or scripts vs. the previous release of the same package.</p>
     </article>
     <article class="ig-card">
       <div class="ig-card-eyebrow">Distribution</div>
       <h3 class="ig-card-title">Dist-tag rollback patterns</h3>
-      <p class="ig-card-body">Detects when <span class="ig-chip">latest</span> regresses across a major boundary &mdash; the structural fingerprint of a compromised-account dist-tag rewrite.</p>
+      <p class="ig-card-body">Detects suspicious <span class="ig-chip">latest</span> tag regressions across major versions &mdash; a common signal of compromised maintainer activity or rollback attacks.</p>
     </article>
     <article class="ig-card">
       <div class="ig-card-eyebrow">Disclosed</div>
@@ -74,8 +74,8 @@ import ScanDemo from "../../components/ScanDemo.astro";
     </article>
     <article class="ig-card">
       <div class="ig-stat-num">100<span style="color:#6ee7b7;font-size:0.7em">%</span></div>
-      <h3 class="ig-card-title">Explainable verdicts</h3>
-      <p class="ig-card-body">Every block is recorded in <span class="ig-chip">installguard.lock</span> with the exact signals that produced it. Deterministic reruns, JSON and JUnit output, and GitHub PR summaries make it usable in real review and audit workflows, not just local demos.</p>
+      <h3 class="ig-card-title">Every verdict explains itself</h3>
+      <p class="ig-card-body">Every verdict is recorded in <span class="ig-chip">installguard.lock</span> with the exact signals that produced it. Deterministic reruns, JSON and JUnit output, and GitHub PR summaries make it usable in real review and audit workflows, not just local demos.</p>
     </article>
   </div>
 </section>
