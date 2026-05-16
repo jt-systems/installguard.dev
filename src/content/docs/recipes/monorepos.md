@@ -5,6 +5,10 @@ description: Running InstallGuard across multiple packages in one repo.
 
 InstallGuard scans one lockfile per invocation. For a monorepo with multiple lockfiles (e.g. workspaces with their own `pnpm-lock.yaml`), invoke once per lockfile and aggregate.
 
+If your repo mixes npm-family and PyPI lockfiles, see
+[Polyglot monorepos](/recipes/polyglot-monorepos/) for the
+cross-ecosystem matrix pattern.
+
 ## pnpm workspaces
 
 ```sh
