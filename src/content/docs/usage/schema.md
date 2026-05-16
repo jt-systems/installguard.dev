@@ -33,13 +33,17 @@ Then in `.vscode/settings.json`:
 ```jsonc
 {
   "yaml.schemas": {
-    ".vscode/installguard-policy.schema.json": "installguard.yaml"
+    ".vscode/installguard-policy.schema.json": [
+      "installguard.yaml",
+      ".installguard/*.yaml",
+      ".installguard/*.yml"
+    ]
   }
 }
 ```
 
 VS Code's YAML extension will now validate every `installguard.yaml` in the
-workspace and offer autocomplete for every policy key.
+workspace and the common `.installguard/` policy files too.
 
 ## Stable URL
 
@@ -50,7 +54,11 @@ so you can reference it directly without invoking the binary:
 ```jsonc
 {
   "yaml.schemas": {
-    "https://raw.githubusercontent.com/jt-systems/installguard/main/schemas/installguard-policy.schema.json": "installguard.yaml"
+    "https://raw.githubusercontent.com/jt-systems/installguard/main/schemas/installguard-policy.schema.json": [
+      "installguard.yaml",
+      ".installguard/*.yaml",
+      ".installguard/*.yml"
+    ]
   }
 }
 ```

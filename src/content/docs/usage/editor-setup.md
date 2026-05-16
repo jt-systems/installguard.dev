@@ -19,10 +19,18 @@ The schema is generated from the same Rust types the CLI uses
 committed file never drifts from the binary's behaviour. So whatever
 your editor accepts, the CLI also accepts.
 
+Every example below targets the same default policy locations:
+
+- `installguard.yaml`
+- `.installguard/*.yaml`
+- `.installguard/*.yml`
+
 ## VS Code
 
-Install [Red Hat's YAML extension](https://marketplace.visualstudio.com/items?itemName=redhat.vscode-yaml)
-and add this to your user or workspace `settings.json`:
+**Where:** user or workspace `settings.json`<br />
+**Requires:** [Red Hat's YAML extension](https://marketplace.visualstudio.com/items?itemName=redhat.vscode-yaml)
+
+Add this mapping:
 
 ```jsonc
 {
@@ -36,13 +44,15 @@ and add this to your user or workspace `settings.json`:
 }
 ```
 
-The patterns are matched against the file path. Adjust them if your
-project keeps its policy somewhere unusual.
+**Check:** open `installguard.yaml` and confirm you get completion,
+hover docs, and validation errors for bad keys.
 
 ## Zed
 
-Zed bundles the YAML language server. Add the mapping to your
-`settings.json` (open with `cmd+,`):
+**Where:** `settings.json`<br />
+**Requires:** none; Zed bundles `yaml-language-server`
+
+Add this mapping:
 
 ```json
 {
@@ -53,7 +63,8 @@ Zed bundles the YAML language server. Add the mapping to your
           "schemas": {
             "https://raw.githubusercontent.com/jt-systems/installguard/main/schemas/installguard-policy.schema.json": [
               "installguard.yaml",
-              ".installguard/*.yaml"
+              ".installguard/*.yaml",
+              ".installguard/*.yml"
             ]
           }
         }
@@ -63,27 +74,34 @@ Zed bundles the YAML language server. Add the mapping to your
 }
 ```
 
+**Check:** reopen `installguard.yaml` and confirm Zed offers schema-backed
+completion and squiggles on invalid fields.
+
 ## JetBrains IDEs (IntelliJ / WebStorm / RustRover / PyCharm)
 
-JetBrains IDEs ship with a built-in JSON Schema mapper that also
-applies to YAML files.
+**Where:** **Settings → Languages & Frameworks → Schemas and DTDs → JSON Schema Mappings**<br />
+**Requires:** none; JetBrains ships the mapper built in
 
-1. **Settings → Languages & Frameworks → Schemas and DTDs → JSON Schema Mappings**
-2. Click **+** to add a new mapping.
-   - **Name**: `installguard`
-   - **Schema file or URL**: paste the schema URL above
-   - **Schema version**: `JSON Schema version 7`
-3. Under **File path pattern**, add:
-   - `installguard.yaml`
-   - `.installguard/*.yaml`
+Create one mapping with:
 
-Hit **OK**. Open `installguard.yaml` and confirm the IDE shows
-"installguard" in the bottom status bar — that means the schema bound.
+- **Name:** `installguard`
+- **Schema file or URL:** the schema URL above
+- **Schema version:** `JSON Schema version 7`
+- **File path patterns:**
+  - `installguard.yaml`
+  - `.installguard/*.yaml`
+  - `.installguard/*.yml`
+
+**Check:** hit **OK**, open `installguard.yaml`, and confirm the IDE
+shows `installguard` in the bottom status bar.
 
 ## Neovim (yaml-language-server)
 
-If you use [nvim-lspconfig](https://github.com/neovim/nvim-lspconfig)
-with `yamlls`, add the schema in your LSP config:
+**Where:** your `yamlls` config<br />
+**Requires:** [nvim-lspconfig](https://github.com/neovim/nvim-lspconfig)
+or equivalent `yaml-language-server` wiring
+
+Add this mapping:
 
 ```lua
 require("lspconfig").yamlls.setup({
@@ -93,6 +111,7 @@ require("lspconfig").yamlls.setup({
         ["https://raw.githubusercontent.com/jt-systems/installguard/main/schemas/installguard-policy.schema.json"] = {
           "installguard.yaml",
           ".installguard/*.yaml",
+          ".installguard/*.yml",
         },
       },
     },
@@ -100,9 +119,12 @@ require("lspconfig").yamlls.setup({
 })
 ```
 
-For [SchemaStore.nvim](https://github.com/b0o/SchemaStore.nvim) users:
-the InstallGuard schema is not yet on SchemaStore — use the explicit
-mapping above until it lands.
+**Check:** reload the LSP client and confirm `installguard.yaml` gets
+completion and validation.
+
+For [SchemaStore.nvim](https://github.com/b0o/SchemaStore.nvim) users,
+the InstallGuard schema is not yet on SchemaStore, so keep using the
+explicit mapping above until it lands.
 
 ## Inline `# yaml-language-server` comment
 
