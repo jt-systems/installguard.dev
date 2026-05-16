@@ -9,7 +9,7 @@ Built with [Astro](https://astro.build) + [Starlight](https://starlight.astro.bu
 ```sh
 pnpm install
 pnpm dev          # http://localhost:4321
-pnpm build        # static output → ./dist
+pnpm build        # static output -> ./dist
 pnpm preview      # serve the production build locally
 ```
 
@@ -21,7 +21,7 @@ Custom domain `installguard.dev` is wired in the Cloudflare dashboard.
 
 Security headers are pinned in [`public/_headers`](public/_headers).
 
-CI dogfoods InstallGuard itself before the browser smoke tests run, so dependency-policy regressions fail this repo the same way they would fail a user project.
+CI dogfoods InstallGuard itself before the browser smoke tests run via a minimal GitHub Actions gate, so dependency-policy regressions fail this repo before the browser tests run.
 
 ## Content
 

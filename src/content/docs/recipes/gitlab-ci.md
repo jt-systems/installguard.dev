@@ -16,12 +16,12 @@ Add this to your project's `.gitlab-ci.yml`:
 
 ```yaml
 include:
-  - remote: 'https://raw.githubusercontent.com/jt-systems/installguard/main/ci/gitlab/installguard.gitlab-ci.yml'
+  - remote: 'https://raw.githubusercontent.com/jt-systems/installguard/v0.3.4/ci/gitlab/installguard.gitlab-ci.yml'
 
 installguard:
   extends: .installguard
   variables:
-    INSTALLGUARD_REF: "main"        # pin to a tag for reproducibility
+    INSTALLGUARD_REF: "v0.3.4"
 ```
 
 That's the whole integration. On every merge-request pipeline you get:
@@ -36,16 +36,16 @@ That's the whole integration. On every merge-request pipeline you get:
 - A non-zero exit code propagates to fail the pipeline if any package
   blocks.
 
-Pin to a release tag once you're past evaluation:
+If you want to track tip during evaluation instead:
 
 ```yaml
 include:
-  - remote: 'https://raw.githubusercontent.com/jt-systems/installguard/v0.3.4/ci/gitlab/installguard.gitlab-ci.yml'
+  - remote: 'https://raw.githubusercontent.com/jt-systems/installguard/main/ci/gitlab/installguard.gitlab-ci.yml'
 
 installguard:
   extends: .installguard
   variables:
-    INSTALLGUARD_REF: "v0.3.4"
+    INSTALLGUARD_REF: "main"        # pin to a tag in production
 ```
 
 ## Configuration
